@@ -1,0 +1,3641 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2e7d32">
+    <meta name="application-name" content="내 식물 일지">
+    <meta name="apple-mobile-web-app-title" content="내 식물 일지">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <title>내 식물 일지 - 스마트 식집사 관리 앱</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --primary-light: #e8f5e9;
+            --primary-border: #c8e6c9;
+            --bg-body: #f5f7f5;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --blue: #0284c7;
+            --blue-bg: #e0f2fe;
+            --amber: #d97706;
+            --amber-bg: #fef3c7;
+            --red: #dc2626;
+            --red-bg: #fee2e2;
+            --purple: #7c3aed;
+            --purple-bg: #f3e8ff;
+            --orange: #c2410c;
+            --orange-bg: #ffedd5;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 10px 28px rgba(15, 23, 42, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.45;
+            min-height: 100vh;
+            padding-bottom: 48px;
+            overflow-x: hidden;
+        }
+
+        button, input, select, textarea {
+            font-family: inherit;
+            color: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 상단 고정 헤더 */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 14px;
+        }
+
+        .header-inner {
+            max-width: 780px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(46, 125, 50, 0.24);
+        }
+
+        .brand-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+        }
+
+        .brand-sub {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .autosave-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 1px 6px;
+            border-radius: 999px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 9px 12px;
+            border-radius: 11px;
+            font-size: 12.5px;
+            font-weight: 700;
+            transition: transform 0.12s ease, background-color 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(46, 125, 50, 0.22);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: #fff;
+            border: 1.5px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-outline.needs-backup {
+            border-color: #f59e0b;
+            background: #fffbeb;
+            color: #b45309;
+        }
+
+        .btn-blue-soft {
+            background: var(--blue-bg);
+            color: var(--blue);
+            border: 1px solid #bae6fd;
+        }
+
+        .btn-green-soft {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border: 1px solid var(--primary-border);
+        }
+
+        /* 메인 컨테이너 */
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 12px 12px 0;
+        }
+
+        /* 폰 파일 백업/복원/관리 툴바 */
+        .quick-tools-bar {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .quick-tools-bar.warn {
+            background: #fffbeb;
+            border-color: #fde68a;
+        }
+
+        .backup-hint {
+            font-size: 11.5px;
+            color: var(--text-sub);
+            flex: 1 1 200px;
+        }
+
+        .backup-hint strong {
+            color: var(--text-main);
+            font-weight: 800;
+        }
+
+        .quick-tools-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .tool-chip-btn {
+            position: relative;
+            padding: 6px 9px;
+            border-radius: 8px;
+            font-size: 11.5px;
+            font-weight: 800;
+            background: #f8fafc;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            white-space: nowrap;
+        }
+
+        .tool-chip-btn.green {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border-color: var(--primary-border);
+        }
+
+        .tool-chip-btn.warn-btn {
+            background: #d97706;
+            color: #fff;
+            border-color: #d97706;
+        }
+
+        .tool-chip-btn.purple {
+            background: var(--purple-bg);
+            color: var(--purple);
+            border-color: #e9d5ff;
+        }
+
+        /* 요약 대시보드 4칸 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 7px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px 4px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--text-sub);
+            letter-spacing: -0.2px;
+        }
+
+        .stat-val {
+            font-size: 18px;
+            font-weight: 900;
+            margin-top: 2px;
+        }
+
+        /* 상단 뷰 전환 탭 (목록 / 캘린더) */
+        .view-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 13px;
+            margin-bottom: 12px;
+        }
+
+        .view-tab-btn {
+            padding: 9px 8px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-sub);
+            transition: all 0.15s ease;
+        }
+
+        .view-tab-btn.active {
+            background: #ffffff;
+            color: var(--primary-dark);
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+        }
+
+        /* 검색 및 장소/정렬 컨트롤 바 (모바일 글자 잘림 완벽 해결) */
+        .controls-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        /* 상태 필터 칩 행 */
+        .filter-chips {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+            scrollbar-width: none;
+        }
+
+        .filter-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-chip {
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            background: #f1f5f9;
+            color: var(--text-sub);
+            white-space: nowrap;
+            border: 1px solid transparent;
+            flex-shrink: 0;
+        }
+
+        .filter-chip.active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .search-row {
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 39px;
+            padding: 0 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            background: #f8fafc;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            background: #fff;
+        }
+
+        /* 모바일에서 전체 장소 / 물 예정일 순 글자 잘림 방지 2열/유연 레이아웃 */
+        .select-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .select-wrapper {
+            flex: 1 1 48%;
+            min-width: 138px;
+            position: relative;
+        }
+
+        .control-select {
+            width: 100%;
+            height: 40px;
+            padding: 0 26px 0 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            background-color: #ffffff;
+            outline: none;
+            box-sizing: border-box;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 9px center;
+            background-size: 12px;
+        }
+
+        .control-select:focus {
+            border-color: var(--primary);
+        }
+
+        /* 식물 카드 리스트 */
+        .plant-list {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+
+        .plant-card {
+            background: var(--bg-card);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            box-shadow: var(--shadow-sm);
+            transition: border-color 0.15s ease;
+        }
+
+        .plant-card.urgent {
+            border-color: #fca5a5;
+            background: linear-gradient(to bottom, #fffafa, #ffffff 38%);
+        }
+
+        .plant-card.soon {
+            border-color: #fcd34d;
+        }
+
+        .card-top {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .plant-thumb {
+            width: 66px;
+            height: 66px;
+            border-radius: 14px;
+            background: var(--primary-light);
+            border: 1px solid var(--primary-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .plant-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .plant-name {
+            font-size: 16.5px;
+            font-weight: 800;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
+
+        .dday-badge {
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-size: 11.5px;
+            font-weight: 800;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .dday-urgent {
+            background: var(--red-bg);
+            color: var(--red);
+        }
+
+        .dday-soon {
+            background: var(--amber-bg);
+            color: var(--amber);
+        }
+
+        .dday-ok {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .plant-species {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .meta-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 7px;
+        }
+
+        .meta-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 8px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .meta-pill.loc {
+            background: #f3e8ff;
+            color: #6d28d9;
+        }
+
+        .meta-pill.adopt {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .meta-pill.cycle {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .meta-pill.leaf {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .meta-pill.repot {
+            background: var(--orange-bg);
+            color: var(--orange);
+        }
+
+        .meta-pill.fert {
+            background: #eef2ff;
+            color: #4338ca;
+        }
+
+        .meta-pill.topdress {
+            background: #f5f5f4;
+            color: #57534e;
+            border: 1px solid #e7e5e4;
+        }
+
+        .meta-pill.soil {
+            background: #fefce8;
+            color: #713f12;
+            border: 1px solid #fef08a;
+        }
+
+        /* 상세 정보 내 흙배합 & 특이사항 메모 카드 */
+        .profile-memo-box {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 11px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            font-size: 12.5px;
+        }
+
+        .profile-memo-row {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .profile-memo-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #92400e;
+        }
+
+        .profile-memo-val {
+            color: #1e293b;
+            font-weight: 600;
+            white-space: pre-line;
+            line-height: 1.4;
+        }
+
+        /* 카드 주기 요약 바 */
+        .cycle-summary-strip {
+            margin-top: 10px;
+            padding: 8px 10px;
+            border-radius: 11px;
+            background: #f8fafc;
+            border: 1px solid #eef2f6;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px 12px;
+            font-size: 11.5px;
+            color: var(--text-sub);
+        }
+
+        .cycle-summary-strip span strong {
+            color: var(--text-main);
+            font-weight: 800;
+        }
+
+        /* 카드 하단 액션 버튼 */
+        .card-actions {
+            margin-top: 11px;
+            display: grid;
+            grid-template-columns: 1.15fr 1.15fr 0.7fr;
+            gap: 7px;
+        }
+
+        .card-actions .btn {
+            padding: 9px 8px;
+            font-size: 12px;
+        }
+
+        /* 빈 상태 */
+        .empty-box {
+            background: #fff;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: var(--radius-lg);
+            padding: 38px 20px;
+            text-align: center;
+            color: var(--text-sub);
+        }
+
+        /* 캘린더 뷰 */
+        .calendar-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .cal-month-title {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .cal-nav-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: #f1f5f9;
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .cal-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .cal-cell {
+            min-height: 54px;
+            border: 1px solid #f1f5f9;
+            border-radius: 10px;
+            padding: 4px 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fff;
+            cursor: pointer;
+            transition: background 0.12s;
+        }
+
+        .cal-cell.other-month {
+            opacity: 0.35;
+        }
+
+        .cal-cell.today {
+            border-color: var(--primary);
+            background: #f0fdf4;
+        }
+
+        .cal-cell.selected {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .cal-day-num {
+            font-size: 11.5px;
+            font-weight: 800;
+        }
+
+        .cal-dots {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2px;
+            margin-top: 3px;
+            font-size: 10px;
+        }
+
+        .cal-day-detail {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* 모달 공통 */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0;
+        }
+
+        @media (min-width: 600px) {
+            .modal-backdrop {
+                align-items: center;
+                padding: 16px;
+            }
+        }
+
+        .modal-panel {
+            width: 100%;
+            max-width: 500px;
+            max-height: 92vh;
+            background: #ffffff;
+            border-radius: 22px 22px 0 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            animation: slideUp 0.18s ease-out;
+        }
+
+        @media (min-width: 600px) {
+            .modal-panel {
+                border-radius: 22px;
+            }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(18px); opacity: 0.6; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 15px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            background: #f1f5f9;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-sub);
+        }
+
+        .modal-body {
+            padding: 16px 18px 22px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-label {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #334155;
+            line-height: 1.3;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            height: 44px;
+            padding: 0 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 11px;
+            font-size: 14px;
+            background: #fff;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .aligned-two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            align-items: start;
+        }
+
+        .aligned-two-col .form-group {
+            min-width: 0;
+        }
+
+        .aligned-two-col .form-label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            height: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .aligned-two-col .form-input {
+            height: 44px;
+        }
+
+        .field-hint {
+            font-size: 11px;
+            color: var(--text-sub);
+            line-height: 1.35;
+        }
+
+        /* 장소 칩 선택기 */
+        .location-chips-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .loc-select-chip {
+            padding: 6px 11px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1.5px solid transparent;
+        }
+
+        .loc-select-chip.active {
+            background: #f3e8ff;
+            color: #6d28d9;
+            border-color: #c084fc;
+        }
+
+        .inline-add-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .inline-add-row .form-input {
+            height: 38px;
+            font-size: 13px;
+        }
+
+        /* 직접 터치 오버레이 사진 첨부 박스 */
+        .photo-upload-box {
+            border: 1.5px dashed #cbd5e1;
+            border-radius: 13px;
+            padding: 10px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .photo-btn-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .overlay-file-btn {
+            position: relative;
+            flex: 1;
+            height: 42px;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1.5px solid #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #1e293b;
+            overflow: hidden;
+        }
+
+        .overlay-file-btn input[type="file"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 100px;
+        }
+
+        .paste-zone {
+            width: 100%;
+            min-height: 36px;
+            padding: 7px 10px;
+            border-radius: 9px;
+            border: 1px dashed #cbd5e1;
+            background: #ffffff;
+            font-size: 11.5px;
+            color: var(--text-sub);
+            text-align: center;
+            outline: none;
+        }
+
+        .paste-zone:focus {
+            border-color: var(--primary);
+            background: #f0fdf4;
+            color: var(--primary-dark);
+        }
+
+        .photo-preview-wrap {
+            position: relative;
+            width: 100%;
+            max-height: 180px;
+            border-radius: 11px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .photo-preview-wrap img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .btn-remove-photo {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(15, 23, 42, 0.75);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        /* 상태 기록 타입 버튼 그리드 */
+        .log-type-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 7px;
+        }
+
+        .log-type-btn {
+            padding: 10px 9px;
+            border-radius: 11px;
+            border: 1.5px solid var(--border);
+            background: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.12s ease;
+        }
+
+        .log-type-btn.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        /* 상세 모달 통계 그리드 */
+        .detail-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .detail-stat-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+        }
+
+        .detail-stat-box .lbl {
+            font-size: 11px;
+            color: var(--text-sub);
+            font-weight: 700;
+        }
+
+        .detail-stat-box .val {
+            font-size: 13.5px;
+            font-weight: 900;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+
+        .detail-stat-box .sub {
+            font-size: 10.5px;
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .timeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .timeline-item {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .timeline-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .timeline-badge {
+            font-size: 12.5px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .duration-pill {
+            background: #fef3c7;
+            color: #b45309;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 10.5px;
+            font-weight: 800;
+        }
+
+        .timeline-date-del {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11.5px;
+            color: var(--text-sub);
+            flex-shrink: 0;
+        }
+
+        .btn-del-log {
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 6px;
+            background: #fef2f2;
+        }
+
+        .timeline-photo {
+            width: 100%;
+            max-height: 170px;
+            object-fit: cover;
+            border-radius: 9px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+
+        /* 장소 관리 리스트 */
+        .manage-loc-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #f8fafc;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* 라이트박스 */
+        .lightbox-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .lightbox-backdrop img {
+            max-width: 100%;
+            max-height: 82vh;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            margin-top: 14px;
+            padding: 9px 22px;
+            border-radius: 999px;
+            background: #ffffff;
+            color: #0f172a;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        /* 토스트 알림 */
+        .toast {
+            position: fixed;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            z-index: 300;
+            background: #1e293b;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            max-width: 90vw;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* =========================================================
+           다크 모드 (Dark Mode) 테마 스타일
+           ========================================================= */
+        body.dark-mode {
+            --primary: #4ade80;
+            --primary-dark: #22c55e;
+            --primary-light: #132a1c;
+            --primary-border: #1e462d;
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --blue: #38bdf8;
+            --blue-bg: #0c2d48;
+            --amber: #fbbf24;
+            --amber-bg: #3b2606;
+            --red: #f87171;
+            --red-bg: #3f1515;
+            --purple: #c084fc;
+            --purple-bg: #2e1547;
+            --orange: #fb923c;
+            --orange-bg: #3d1d0a;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+            --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.55);
+        }
+
+        body.dark-mode .app-header {
+            background: rgba(15, 23, 42, 0.92);
+        }
+
+        body.dark-mode .brand-title {
+            color: #4ade80;
+        }
+
+        body.dark-mode .btn-primary {
+            background: #2e7d32;
+            color: #ffffff;
+        }
+
+        body.dark-mode .btn-primary:hover {
+            background: #22c55e;
+            color: #052e16;
+        }
+
+        body.dark-mode .btn-outline {
+            background: #1e293b;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .btn-blue-soft {
+            border-color: #0369a1;
+        }
+
+        body.dark-mode .quick-tools-bar {
+            background: #1e293b;
+        }
+
+        body.dark-mode .quick-tools-bar.warn {
+            background: #2c210b;
+            border-color: #78350f;
+        }
+
+        body.dark-mode .tool-chip-btn {
+            background: #0f172a;
+            color: #cbd5e1;
+            border-color: #334155;
+        }
+
+        body.dark-mode .tool-chip-btn.green {
+            background: #132a1c;
+            color: #4ade80;
+            border-color: #1e462d;
+        }
+
+        body.dark-mode .tool-chip-btn.warn-btn {
+            background: #d97706;
+            color: #ffffff;
+            border-color: #d97706;
+        }
+
+        body.dark-mode .tool-chip-btn.purple {
+            background: #2e1547;
+            color: #c084fc;
+            border-color: #581c87;
+        }
+
+        body.dark-mode .view-tabs {
+            background: #0b1120;
+            border: 1px solid #1e293b;
+        }
+
+        body.dark-mode .view-tab-btn.active {
+            background: #1e293b;
+            color: #4ade80;
+        }
+
+        body.dark-mode .filter-chip {
+            background: #0f172a;
+            color: #94a3b8;
+            border-color: #334155;
+        }
+
+        body.dark-mode .filter-chip.active {
+            background: #2e7d32;
+            color: #ffffff;
+            border-color: #2e7d32;
+        }
+
+        body.dark-mode .search-input,
+        body.dark-mode .control-select,
+        body.dark-mode .form-input,
+        body.dark-mode .form-select,
+        body.dark-mode .form-textarea {
+            background-color: #0f172a;
+            border-color: #334155;
+            color: #f1f5f9;
+            color-scheme: dark;
+        }
+
+        body.dark-mode .search-input:focus,
+        body.dark-mode .control-select:focus,
+        body.dark-mode .form-input:focus,
+        body.dark-mode .form-select:focus,
+        body.dark-mode .form-textarea:focus {
+            border-color: #4ade80;
+            background-color: #0b1120;
+        }
+
+        body.dark-mode .control-select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        }
+
+        body.dark-mode .plant-card.urgent {
+            border-color: #991b1b;
+            background: linear-gradient(to bottom, #2b1418, #1e293b 42%);
+        }
+
+        body.dark-mode .plant-card.soon {
+            border-color: #92400e;
+        }
+
+        body.dark-mode .meta-pill {
+            background: #0f172a;
+            color: #cbd5e1;
+        }
+
+        body.dark-mode .meta-pill.loc {
+            background: #2e1547;
+            color: #d8b4fe;
+        }
+
+        body.dark-mode .meta-pill.adopt {
+            background: #063729;
+            color: #6ee7b7;
+        }
+
+        body.dark-mode .meta-pill.cycle {
+            background: #0c2d48;
+            color: #7dd3fc;
+        }
+
+        body.dark-mode .meta-pill.leaf {
+            background: #362f09;
+            color: #fde047;
+        }
+
+        body.dark-mode .meta-pill.repot {
+            background: #3d1d0a;
+            color: #fdba74;
+        }
+
+        body.dark-mode .meta-pill.fert {
+            background: #1e1b4b;
+            color: #a5b4fc;
+        }
+
+        body.dark-mode .meta-pill.topdress {
+            background: #292524;
+            color: #d6d3d1;
+            border-color: #44403c;
+        }
+
+        body.dark-mode .meta-pill.soil {
+            background: #332b08;
+            color: #fef08a;
+            border-color: #713f12;
+        }
+
+        body.dark-mode .profile-memo-box {
+            background: #2c210b;
+            border-color: #78350f;
+        }
+
+        body.dark-mode .profile-memo-label {
+            color: #fbbf24;
+        }
+
+        body.dark-mode .profile-memo-val {
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .cycle-summary-strip {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        body.dark-mode .empty-box,
+        body.dark-mode .calendar-card,
+        body.dark-mode .modal-panel,
+        body.dark-mode .timeline-item {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        body.dark-mode .cal-nav-btn,
+        body.dark-mode .modal-close {
+            background: #0f172a;
+            color: #cbd5e1;
+        }
+
+        body.dark-mode .cal-cell {
+            background: #0f172a;
+            border-color: #1e293b;
+        }
+
+        body.dark-mode .cal-cell.today {
+            background: #132a1c;
+            border-color: #4ade80;
+        }
+
+        body.dark-mode .cal-cell.selected {
+            background: #2e7d32;
+            color: #ffffff;
+            border-color: #4ade80;
+        }
+
+        body.dark-mode .form-label {
+            color: #cbd5e1;
+        }
+
+        body.dark-mode .loc-select-chip {
+            background: #0f172a;
+            color: #94a3b8;
+        }
+
+        body.dark-mode .loc-select-chip.active {
+            background: #2e1547;
+            color: #d8b4fe;
+            border-color: #9333ea;
+        }
+
+        body.dark-mode .photo-upload-box,
+        body.dark-mode .detail-stat-box,
+        body.dark-mode .manage-loc-item {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        body.dark-mode .overlay-file-btn,
+        body.dark-mode .paste-zone,
+        body.dark-mode .log-type-btn {
+            background: #1e293b;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .log-type-btn.active {
+            background: #132a1c;
+            border-color: #4ade80;
+            color: #4ade80;
+        }
+
+        body.dark-mode .duration-pill {
+            background: #3b2606;
+            color: #fbbf24;
+        }
+
+        body.dark-mode .btn-del-log {
+            background: #3f1515;
+            color: #f87171;
+        }
+
+        .theme-toggle-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: #f1f5f9;
+            border: 1.5px solid var(--border);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            transition: transform 0.12s ease, background-color 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle-btn:active {
+            transform: scale(0.95);
+        }
+
+        body.dark-mode .theme-toggle-btn {
+            background: #1e293b;
+            border-color: #334155;
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 고정 헤더 -->
+    <header class="app-header">
+        <div class="header-inner">
+            <div class="brand">
+                <div class="brand-logo">🌱</div>
+                <div>
+                    <div class="brand-title">내 식물 일지</div>
+                    <div class="brand-sub">
+                        <span id="today-subtitle">오늘의 가드닝 기록</span>
+                        <span class="autosave-pill">● 자동 저장됨</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button type="button" class="theme-toggle-btn" id="btn-theme-toggle" title="일반모드 / 다크모드 전환" aria-label="테마 전환">🌙</button>
+                <button type="button" class="btn btn-primary" id="btn-open-add">＋ 새 식물 등록</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 폰 파일 백업 / 복원 / 엑셀 / 장소 관리 툴바 -->
+        <div class="quick-tools-bar" id="backup-banner">
+            <div class="backup-hint" id="backup-banner-text">
+                📱 기기 자동 저장 중 · 주기적으로 <strong>백업 (JSON)</strong>을 저장하세요.
+            </div>
+            <div class="quick-tools-btns">
+                <div class="tool-chip-btn">
+                    <span>📥 불러오기 (JSON)</span>
+                    <input type="file" id="input-quick-import-json" accept=".json,application/json" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;">
+                </div>
+                <button type="button" class="tool-chip-btn green" id="btn-quick-export-json">📤 백업 (JSON)</button>
+                <button type="button" class="tool-chip-btn" id="btn-quick-export-csv">📊 엑셀(CSV)</button>
+                <button type="button" class="tool-chip-btn purple" id="btn-open-loc-manage">⚙️ 장소 관리</button>
+            </div>
+        </div>
+
+        <!-- 요약 대시보드 4칸 -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">전체 개체 수</div>
+                <div class="stat-val" id="stat-total" style="color:var(--text-main);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">보유 품종 수</div>
+                <div class="stat-val" id="stat-species" style="color:var(--primary);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">물 줄 식물 (오늘)</div>
+                <div class="stat-val" id="stat-urgent" style="color:var(--red);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">4일 이내 물 줄 식물</div>
+                <div class="stat-val" id="stat-due4" style="color:var(--blue);">0</div>
+            </div>
+        </section>
+
+        <!-- 대시보드 / 캘린더 탭 -->
+        <div class="view-tabs">
+            <button type="button" class="view-tab-btn active" data-tab="list">🌱 내 식물 목록</button>
+            <button type="button" class="view-tab-btn" data-tab="calendar">📅 물주기 &amp; 관리 캘린더</button>
+        </div>
+
+        <!-- 탭 1: 식물 목록 뷰 -->
+        <section id="view-list">
+            <div class="controls-box">
+                <!-- 상태 필터 탭 (4일 이내 물 줄 식물 탭 적용) -->
+                <div class="filter-chips" id="status-filter-chips">
+                    <button type="button" class="filter-chip active" data-filter="all" id="chip-all">전체 보기 (0)</button>
+                    <button type="button" class="filter-chip" data-filter="urgent" id="chip-urgent">🚨 오늘 물 줄 식물 (0)</button>
+                    <button type="button" class="filter-chip" data-filter="due4" id="chip-due4">💧 4일 이내 물 줄 식물 (0)</button>
+                    <button type="button" class="filter-chip" data-filter="recent_care" id="chip-recent">🌱 최근 성장/분갈이 (0)</button>
+                </div>
+
+                <!-- 검색 입력 -->
+                <div class="search-row">
+                    <input type="text" class="search-input" id="search-input" placeholder="🔍 식물 이름, 품종, 장소, 메모 검색...">
+                </div>
+
+                <!-- 모바일 글자 잘림 방지: 전체 장소 & 물 예정일 순 2열 유연 드롭다운 -->
+                <div class="select-row">
+                    <div class="select-wrapper">
+                        <select class="control-select" id="location-filter-select" aria-label="장소별 필터">
+                            <option value="all">📍 전체 장소</option>
+                        </select>
+                    </div>
+                    <div class="select-wrapper">
+                        <select class="control-select" id="sort-select" aria-label="목록 정렬 기준">
+                            <option value="water_asc">💧 물 예정일 순</option>
+                            <option value="adopt_asc">🏡 입양일 오래된 순</option>
+                            <option value="adopt_desc">🏡 입양일 최근 순</option>
+                            <option value="name_asc">🔤 이름 가나다 순</option>
+                            <option value="loc_asc">📍 장소 순</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="plant-list" id="plant-list-container"></div>
+        </section>
+
+        <!-- 탭 2: 월간 캘린더 뷰 -->
+        <section id="view-calendar" class="hidden">
+            <div class="calendar-card">
+                <div class="cal-header">
+                    <button type="button" class="cal-nav-btn" id="btn-cal-prev">◀</button>
+                    <div class="cal-month-title" id="cal-month-title">2026년 11월</div>
+                    <button type="button" class="cal-nav-btn" id="btn-cal-next">▶</button>
+                </div>
+                <div class="cal-weekdays">
+                    <div style="color:#ef4444;">일</div>
+                    <div>월</div>
+                    <div>화</div>
+                    <div>수</div>
+                    <div>목</div>
+                    <div>금</div>
+                    <div style="color:#3b82f6;">토</div>
+                </div>
+                <div class="cal-grid" id="cal-grid"></div>
+                <div class="cal-day-detail" id="cal-day-detail"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- 모달 1: 식물 추가 / 수정 -->
+    <!-- ========================================================= -->
+    <div id="modal-plant" class="modal-backdrop hidden">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-plant-title">새 식물 등록</h2>
+                <button type="button" class="modal-close" data-close="modal-plant">✕</button>
+            </div>
+            <form id="form-plant" class="modal-body">
+                <input type="hidden" id="plant-edit-id">
+
+                <div class="form-group">
+                    <label class="form-label" for="plant-name">식물 애칭 / 개체 이름 *</label>
+                    <input type="text" class="form-input" id="plant-name" placeholder="예: 몬스테라 알보 #1, 초록이" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="plant-species">품종명 (선택 · 같은 품종 여러 개체 묶음 집계)</label>
+                    <input type="text" class="form-input" id="plant-species" placeholder="예: 몬스테라 알보 (비우면 식물 이름으로 품종 집계)">
+                </div>
+
+                <div class="aligned-two-col">
+                    <div class="form-group">
+                        <label class="form-label" for="plant-leaves">현재 총 잎 수 (장) *</label>
+                        <input type="number" class="form-input" id="plant-leaves" min="0" max="999" value="5" required>
+                        <span class="field-hint">신엽 펴짐·하엽 시 자동 증감</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="plant-interval">기본 물주기 (일) *</label>
+                        <input type="number" class="form-input" id="plant-interval" min="1" max="365" value="7" required>
+                        <span class="field-hint">기록 누적 시 최근 4회 자동 계산</span>
+                    </div>
+                </div>
+
+                <div class="aligned-two-col">
+                    <div class="form-group">
+                        <label class="form-label" for="plant-adopted">입양일 (함께한 날)</label>
+                        <input type="date" class="form-input" id="plant-adopted">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="plant-last-watered">마지막 물 준 날</label>
+                        <input type="date" class="form-input" id="plant-last-watered">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">배치 장소 / 위치</label>
+                    <div class="location-chips-wrap" id="plant-loc-chips"></div>
+                    <div class="inline-add-row">
+                        <input type="text" class="form-input" id="plant-custom-loc-input" placeholder="새 장소 직접 추가 (예: 식물장 2단)">
+                        <button type="button" class="btn btn-green-soft" id="btn-add-loc-in-plant">＋ 추가</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="plant-soil-mix">🪴 흙배합 (선택)</label>
+                    <input type="text" class="form-input" id="plant-soil-mix" placeholder="예: 상토 2 : 바크 1 : 펄라이트 1 (마사토 배수층)">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="plant-special-note">📌 특이사항 메모 (선택)</label>
+                    <textarea class="form-textarea" id="plant-special-note" rows="2" style="height:auto; min-height:66px; padding:10px 12px; resize:vertical;" placeholder="예: 순화 중, 과습 주의, 무늬 발현 관찰, 뿌리 파리 방제 필요 등"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">대표 사진 (선택)</label>
+                    <div class="photo-upload-box">
+                        <div class="photo-btn-row">
+                            <div class="overlay-file-btn">
+                                <span id="plant-photo-btn-label">📷 사진 선택</span>
+                                <input type="file" id="input-plant-photo" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="paste-zone" contenteditable="true" id="paste-plant-photo">📋 갤러리 사진 복사 후 길게 눌러 붙여넣기</div>
+                        <div class="photo-preview-wrap hidden" id="plant-photo-preview-wrap">
+                            <img id="plant-photo-preview" src="" alt="대표 사진 미리보기">
+                            <button type="button" class="btn-remove-photo" id="btn-remove-plant-photo">✕ 사진 삭제</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="height:46px; font-size:14px; margin-top:4px;">저장하기</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 모달 2: 상태 & 성장 기록 추가 -->
+    <!-- ========================================================= -->
+    <div id="modal-log" class="modal-backdrop hidden">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-log-title">🌿 상태 및 성장 기록</h2>
+                <button type="button" class="modal-close" data-close="modal-log">✕</button>
+            </div>
+            <form id="form-log" class="modal-body">
+                <input type="hidden" id="log-plant-id">
+
+                <div class="form-group">
+                    <label class="form-label">기록할 상태 선택 *</label>
+                    <div class="log-type-grid" id="log-type-grid">
+                        <button type="button" class="log-type-btn active" data-type="water">💧 물주기</button>
+                        <button type="button" class="log-type-btn" data-type="sprout">✨ 새순 돋음</button>
+                        <button type="button" class="log-type-btn" data-type="new_leaf_start">🌱 신엽 펴지기 시작</button>
+                        <button type="button" class="log-type-btn" data-type="new_leaf">🌿 신엽 펴짐 (+1잎)</button>
+                        <button type="button" class="log-type-btn" data-type="drop_leaf_start">🍂 하엽지기 시작</button>
+                        <button type="button" class="log-type-btn" data-type="drop_leaf">🍁 하엽 짐 (-1잎)</button>
+                        <button type="button" class="log-type-btn" data-type="move">📍 장소 이동</button>
+                        <button type="button" class="log-type-btn" data-type="repot">🪴 분갈이</button>
+                        <button type="button" class="log-type-btn" data-type="topdress">⛰️ 복토</button>
+                        <button type="button" class="log-type-btn" data-type="fertilizer">🧪 영양제</button>
+                        <button type="button" class="log-type-btn" data-type="note">📝 일반 메모</button>
+                    </div>
+                </div>
+
+                <!-- 장소 이동 선택 시 표시 -->
+                <div class="form-group hidden" id="log-move-loc-group">
+                    <label class="form-label">이동할 새 장소 선택 *</label>
+                    <div class="location-chips-wrap" id="log-move-loc-chips"></div>
+                    <div class="inline-add-row">
+                        <input type="text" class="form-input" id="log-move-new-loc-input" placeholder="새 장소 추가 (예: 거실 선반)">
+                        <button type="button" class="btn btn-green-soft" id="btn-add-loc-in-log">＋ 추가</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="log-date">기록 날짜 *</label>
+                    <input type="date" class="form-input" id="log-date" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="log-note">상세 내용 / 메모 (선택)</label>
+                    <input type="text" class="form-input" id="log-note" placeholder="예: 흙 배합(바크+펄라이트), 알약 영양제 1알">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">기록 사진 첨부 (선택)</label>
+                    <div class="photo-upload-box">
+                        <div class="photo-btn-row">
+                            <div class="overlay-file-btn">
+                                <span id="log-photo-btn-label">📷 사진 선택</span>
+                                <input type="file" id="input-log-photo" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="paste-zone" contenteditable="true" id="paste-log-photo">📋 갤러리 사진 복사 후 길게 눌러 붙여넣기</div>
+                        <div class="photo-preview-wrap hidden" id="log-photo-preview-wrap">
+                            <img id="log-photo-preview" src="" alt="기록 사진 미리보기">
+                            <button type="button" class="btn-remove-photo" id="btn-remove-log-photo">✕ 사진 삭제</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="height:46px; font-size:14px;">기록 저장하기</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 모달 3: 식물 상세 정보 & 타임라인 -->
+    <!-- ========================================================= -->
+    <div id="modal-detail" class="modal-backdrop hidden">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h2 class="modal-title" id="detail-title">식물 상세 정보</h2>
+                <button type="button" class="modal-close" data-close="modal-detail">✕</button>
+            </div>
+            <div class="modal-body" id="detail-body"></div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 모달 4: 장소(위치) 생성 및 삭제 관리 -->
+    <!-- ========================================================= -->
+    <div id="modal-locations" class="modal-backdrop hidden">
+        <div class="modal-panel" style="max-width:420px;">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ 집 안 장소(위치) 관리</h2>
+                <button type="button" class="modal-close" data-close="modal-locations">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">새 장소 추가</label>
+                    <div class="inline-add-row">
+                        <input type="text" class="form-input" id="manage-new-loc-input" placeholder="예: 안방 베란다, 온실장 1층">
+                        <button type="button" class="btn btn-primary" id="btn-manage-add-loc">추가</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">등록된 장소 목록</label>
+                    <div id="manage-loc-list" style="display:flex; flex-direction:column; gap:7px;"></div>
+                </div>
+                <div style="border-top:1px solid var(--border); padding-top:10px; text-align:right;">
+                    <button type="button" id="btn-reset-sample" style="font-size:11.5px; color:var(--text-muted); text-decoration:underline;">
+                        기본 샘플 데이터로 초기화
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 모달 5: 확인 대화상자 (alert / confirm 대체) -->
+    <!-- ========================================================= -->
+    <div id="modal-confirm" class="modal-backdrop hidden" style="z-index:150;">
+        <div class="modal-panel" style="max-width:360px;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="confirm-title">확인</h2>
+                <button type="button" class="modal-close" data-close="modal-confirm">✕</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message" style="font-size:13.5px; color:var(--text-main); white-space:pre-line;"></p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px;">
+                    <button type="button" class="btn btn-outline" data-close="modal-confirm">취소</button>
+                    <button type="button" class="btn btn-primary" id="btn-confirm-yes" style="background:var(--red);">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 사진 전체 화면 라이트박스 -->
+    <div id="lightbox" class="lightbox-backdrop hidden">
+        <img id="lightbox-img" src="" alt="확대 사진">
+        <button type="button" class="lightbox-close" id="btn-close-lightbox">닫기 ✕</button>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const STORAGE_KEY = 'plant_butler_v4_data';
+            const LEGACY_KEYS = ['plantButlerData_v1', 'plantManagerData', 'plant_butler_v3_data', 'plant_butler_v3', 'plant_butler_v2', 'plant_butler_v1'];
+            const DEFAULT_LOCATIONS = ['거실 창가', '베란다', '식물등 아래', '방 책상', '침실', '주방'];
+
+            const LOG_TYPE_META = {
+                water: { icon: '💧', label: '물주기' },
+                sprout: { icon: '✨', label: '새순 돋음' },
+                new_leaf_start: { icon: '🌱', label: '신엽 펴지기 시작' },
+                new_leaf: { icon: '🌿', label: '신엽 펴짐 (+1잎)' },
+                drop_leaf_start: { icon: '🍂', label: '하엽지기 시작' },
+                drop_leaf: { icon: '🍁', label: '하엽 짐 (-1잎)' },
+                move: { icon: '📍', label: '장소 이동' },
+                repot: { icon: '🪴', label: '분갈이' },
+                topdress: { icon: '⛰️', label: '복토' },
+                fertilizer: { icon: '🧪', label: '영양제' },
+                note: { icon: '📝', label: '일반 메모' },
+                care: { icon: '📝', label: '일반 메모' }
+            };
+
+            // 앱 상태
+            let plants = [];
+            let customLocations = DEFAULT_LOCATIONS.slice();
+            let currentSort = 'water_asc';
+            let activeStatusFilter = 'all';
+            let activeLocationFilter = 'all';
+            let activeTab = 'list';
+            let lastBackupAt = '';
+            let dirtySinceBackup = false;
+
+            // 캘린더 상태
+            const nowInit = new Date();
+            let calYear = nowInit.getFullYear();
+            let calMonth = nowInit.getMonth();
+            let calSelectedDate = getTodayStr();
+
+            // 임시 작성 상태
+            let draftPlantPhoto = '';
+            let draftLogPhoto = '';
+            let selectedPlantLoc = '';
+            let selectedLogType = 'water';
+            let selectedMoveLoc = '';
+            let confirmCallback = null;
+            let toastTimer = null;
+
+
+            // =========================================================
+            // 일반모드 / 다크모드 테마 관리
+            // =========================================================
+            const THEME_STORAGE_KEY = 'plant_butler_theme_v1';
+
+            function applyTheme(theme) {
+                const isDark = theme === 'dark';
+                document.body.classList.toggle('dark-mode', isDark);
+                const btn = document.getElementById('btn-theme-toggle');
+                if (btn) {
+                    btn.textContent = isDark ? '☀️' : '🌙';
+                    btn.title = isDark ? '일반모드로 전환' : '다크모드로 전환';
+                }
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) {
+                    metaTheme.setAttribute('content', isDark ? '#0f172a' : '#2e7d32');
+                }
+            }
+
+            function initTheme() {
+                let savedTheme = 'light';
+                try {
+                    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+                    if (stored === 'dark' || stored === 'light') {
+                        savedTheme = stored;
+                    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        savedTheme = 'dark';
+                    }
+                } catch (e) {}
+                applyTheme(savedTheme);
+            }
+
+            function toggleTheme() {
+                const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+                try {
+                    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+                } catch (e) {}
+                applyTheme(nextTheme);
+                showToast(nextTheme === 'dark' ? '🌙 다크모드로 전환되었습니다.' : '☀️ 일반모드로 전환되었습니다.');
+            }
+
+            // =========================================================
+            // 날짜 유틸리티
+            // =========================================================
+            function getTodayStr() {
+                const d = new Date();
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            }
+
+            function parseDateLocal(str) {
+                if (!str) return null;
+                const parts = str.split('-').map(Number);
+                if (parts.length !== 3 || parts.some(isNaN)) return null;
+                return new Date(parts[0], parts[1] - 1, parts[2]);
+            }
+
+            function addDaysStr(dateStr, days) {
+                const d = parseDateLocal(dateStr);
+                if (!d) return getTodayStr();
+                d.setDate(d.getDate() + Number(days || 0));
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            }
+
+            function diffDays(fromStr, toStr) {
+                const d1 = parseDateLocal(fromStr);
+                const d2 = parseDateLocal(toStr);
+                if (!d1 || !d2) return 0;
+                return Math.round((d2.getTime() - d1.getTime()) / 86400000);
+            }
+
+            function formatDotDate(str) {
+                if (!str) return '';
+                return str.replace(/-/g, '.');
+            }
+
+            function generateId() {
+                return 'id_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+            }
+
+            function escapeHtml(str) {
+                return String(str || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;');
+            }
+
+            // =========================================================
+            // 토스트 & 확인 모달 & 라이트박스
+            // =========================================================
+            function showToast(msg) {
+                const el = document.getElementById('toast');
+                el.textContent = msg;
+                el.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+            }
+
+            function openModal(id) {
+                document.getElementById(id).classList.remove('hidden');
+            }
+
+            function closeModal(id) {
+                document.getElementById(id).classList.add('hidden');
+            }
+
+            function openConfirm(title, message, onConfirm, confirmBtnText = '삭제') {
+                document.getElementById('confirm-title').textContent = title;
+                document.getElementById('confirm-message').textContent = message;
+                const yesBtn = document.getElementById('btn-confirm-yes');
+                yesBtn.textContent = confirmBtnText;
+                confirmCallback = onConfirm;
+                openModal('modal-confirm');
+            }
+
+            function openLightbox(src) {
+                if (!src) return;
+                document.getElementById('lightbox-img').src = src;
+                document.getElementById('lightbox').classList.remove('hidden');
+            }
+
+            // =========================================================
+            // 이미지 압축 (최대 800px, JPEG 품질 0.75)
+            // =========================================================
+            function compressImageBlob(blobOrFile) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const maxSide = 800;
+                            let w = img.width;
+                            let h = img.height;
+                            if (w > maxSide || h > maxSide) {
+                                if (w > h) {
+                                    h = Math.round((h * maxSide) / w);
+                                    w = maxSide;
+                                } else {
+                                    w = Math.round((w * maxSide) / h);
+                                    h = maxSide;
+                                }
+                            }
+                            const canvas = document.createElement('canvas');
+                            canvas.width = w;
+                            canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillRect(0, 0, w, h);
+                            ctx.drawImage(img, 0, 0, w, h);
+                            resolve(canvas.toDataURL('image/jpeg', 0.75));
+                        };
+                        img.onerror = reject;
+                        img.src = e.target.result;
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blobOrFile);
+                });
+            }
+
+            // =========================================================
+            // 데이터 정규화 및 하위 호환 마이그레이션
+            // =========================================================
+            function normalizeLogType(rawType) {
+                if (!rawType) return 'note';
+                if (rawType === 'care') return 'note';
+                return rawType;
+            }
+
+            function normalizePlant(raw, idx = 0) {
+                const today = getTodayStr();
+                const logs = Array.isArray(raw.logs) ? raw.logs.map(l => ({
+                    id: l.id || generateId(),
+                    type: normalizeLogType(l.type),
+                    date: l.date || today,
+                    note: l.note || '',
+                    photo: l.photo || '',
+                    fromLoc: l.fromLoc || '',
+                    toLoc: l.toLoc || ''
+                })) : [];
+
+                logs.sort((a, b) => a.date.localeCompare(b.date));
+
+                return {
+                    id: raw.id || ('plant_' + idx + '_' + generateId()),
+                    name: String(raw.name || '이름 없는 식물').trim(),
+                    species: String(raw.species || raw.cultivar || '').trim(),
+                    baseLeaves: Math.max(0, Number(raw.baseLeaves ?? raw.leafCount ?? 0)),
+                    defaultInterval: Math.max(1, Number(raw.defaultInterval ?? raw.waterInterval ?? 7)),
+                    adoptedDate: raw.adoptedDate || '',
+                    initialLastWatered: raw.initialLastWatered || raw.lastWatered || today,
+                    location: String(raw.location || '').trim(),
+                    soilMix: String(raw.soilMix || '').trim(),
+                    specialNote: String(raw.specialNote || '').trim(),
+                    photo: raw.photo || '',
+                    logs: logs
+                };
+            }
+
+            function createSamplePlants() {
+                const today = getTodayStr();
+                const d26 = addDaysStr(today, -26);
+                const d19 = addDaysStr(today, -19);
+                const d12 = addDaysStr(today, -12);
+                const d5 = addDaysStr(today, -5);
+                const d8 = addDaysStr(today, -8);
+                const d2 = addDaysStr(today, -2);
+                const d40 = addDaysStr(today, -40);
+
+                return [
+                    normalizePlant({
+                        id: 'sample_1',
+                        name: '몬스테라 델리시오사 #1',
+                        species: '몬스테라 델리시오사',
+                        baseLeaves: 5,
+                        defaultInterval: 7,
+                        adoptedDate: d40,
+                        initialLastWatered: d26,
+                        location: '거실 창가',
+                        soilMix: '상토 3 : 바크 3 : 펄라이트 2 : 산야초 2',
+                        specialNote: '공중뿌리 수태봉 유도 중 · 직사광선 피하고 밝은 간접광 유지',
+                        logs: [
+                            { id: 'l0', type: 'repot', date: d26, note: '배수 좋은 흙으로 분갈이 완료' },
+                            { id: 'w1', type: 'water', date: d26, note: '분갈이 후 첫 관수' },
+                            { id: 'w2', type: 'water', date: d19, note: '듬뿍 관수' },
+                            { id: 'l2', type: 'new_leaf_start', date: d12, note: '돌돌 말린 새 잎 올라옴' },
+                            { id: 'w3', type: 'water', date: d12, note: '겉흙 마름 확인 후 물줌' },
+                            { id: 'l4', type: 'new_leaf', date: d8, note: '찢잎 1장 예쁘게 펴짐!' },
+                            { id: 'f1', type: 'fertilizer', date: d8, note: '알약 영양제 1알 시비' },
+                            { id: 'w4', type: 'water', date: d5, note: '최근 4회 주기 계산 샘플' }
+                        ]
+                    }),
+                    normalizePlant({
+                        id: 'sample_2',
+                        name: '스킨답서스 픽투스',
+                        species: '스킨답서스 픽투스',
+                        baseLeaves: 12,
+                        defaultInterval: 5,
+                        adoptedDate: addDaysStr(today, -65),
+                        initialLastWatered: d2,
+                        location: '방 책상',
+                        logs: [
+                            { id: 'l5', type: 'water', date: d2, note: '저면관수' }
+                        ]
+                    })
+                ];
+            }
+
+            function saveState(markDirty = true) {
+                if (markDirty) {
+                    dirtySinceBackup = true;
+                }
+                const payload = {
+                    version: 4,
+                    updatedAt: new Date().toISOString(),
+                    lastBackupAt: lastBackupAt,
+                    dirtySinceBackup: dirtySinceBackup,
+                    sortPreference: currentSort,
+                    customLocations: customLocations,
+                    plants: plants
+                };
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+                } catch (e) {
+                    showToast('⚠️ 저장 공간이 부족합니다. 불필요한 사진을 줄이거나 백업해 주세요.');
+                }
+                updateBackupUI();
+            }
+
+            function loadState() {
+                try {
+                    let rawStr = localStorage.getItem(STORAGE_KEY);
+                    if (!rawStr) {
+                        for (const legacyKey of LEGACY_KEYS) {
+                            const legacyStr = localStorage.getItem(legacyKey);
+                            if (legacyStr) {
+                                rawStr = legacyStr;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!rawStr) {
+                        plants = createSamplePlants();
+                        customLocations = DEFAULT_LOCATIONS.slice();
+                        saveState(false);
+                        return;
+                    }
+
+                    const parsed = JSON.parse(rawStr);
+                    if (Array.isArray(parsed)) {
+                        plants = parsed.map((p, i) => normalizePlant(p, i));
+                    } else if (parsed && Array.isArray(parsed.plants)) {
+                        plants = parsed.plants.map((p, i) => normalizePlant(p, i));
+                        if (Array.isArray(parsed.customLocations) && parsed.customLocations.length > 0) {
+                            customLocations = parsed.customLocations;
+                        }
+                        if (parsed.sortPreference) currentSort = parsed.sortPreference;
+                        if (parsed.lastBackupAt) lastBackupAt = parsed.lastBackupAt;
+                        dirtySinceBackup = Boolean(parsed.dirtySinceBackup);
+                    } else {
+                        plants = createSamplePlants();
+                    }
+
+                    plants.forEach(p => {
+                        if (p.location && p.location !== '미지정' && !customLocations.includes(p.location)) {
+                            customLocations.push(p.location);
+                        }
+                    });
+                } catch (e) {
+                    plants = createSamplePlants();
+                }
+            }
+
+            function updateBackupUI() {
+                const banner = document.getElementById('backup-banner');
+                const bannerText = document.getElementById('backup-banner-text');
+                const quickSaveBtn = document.getElementById('btn-quick-export-json');
+
+                if (dirtySinceBackup) {
+                    banner.classList.add('warn');
+                    quickSaveBtn.classList.add('warn-btn');
+                    bannerText.innerHTML = lastBackupAt
+                        ? `⚠️ 마지막 백업(${lastBackupAt}) 이후 <strong>새 기록</strong>이 있습니다.`
+                        : `⚠️ 아직 파일로 백업하지 않았습니다. <strong>백업 (JSON)</strong>을 눌러 보관하세요.`;
+                } else {
+                    banner.classList.remove('warn');
+                    quickSaveBtn.classList.remove('warn-btn');
+                    bannerText.innerHTML = lastBackupAt
+                        ? `✅ 최신 백업 완료 (${lastBackupAt}) · 기기에도 자동 저장 중`
+                        : `📱 기기 자동 저장 중 · 언제든 <strong>백업 (JSON)</strong>으로 파일 보관 가능`;
+                }
+            }
+
+            // =========================================================
+            // 스마트 물주기 계산 (최근 4회 물주기 기준 평균 + 이상치 중앙값 보정)
+            // =========================================================
+            function calculateSmartWaterCycle(uniqueWaterDates, defaultInterval) {
+                const fallback = Math.max(1, Number(defaultInterval || 7));
+                if (!Array.isArray(uniqueWaterDates) || uniqueWaterDates.length < 2) {
+                    return {
+                        interval: fallback,
+                        method: '기본 설정 주기',
+                        shortLabel: `평균 ${fallback}일`,
+                        isMedian: false
+                    };
+                }
+
+                // 가장 최근 최대 4회 물 준 날짜 추출 -> 최대 3개의 물주기 간격 생성
+                const recentDates = uniqueWaterDates.slice(-4);
+                const intervals = [];
+                for (let i = 1; i < recentDates.length; i++) {
+                    const gap = diffDays(recentDates[i - 1], recentDates[i]);
+                    if (gap > 0) intervals.push(gap);
+                }
+
+                if (intervals.length === 0) {
+                    return {
+                        interval: fallback,
+                        method: '기본 설정 주기',
+                        shortLabel: `평균 ${fallback}일`,
+                        isMedian: false
+                    };
+                }
+
+                if (intervals.length === 1) {
+                    const val = Math.max(1, Math.round(intervals[0]));
+                    return {
+                        interval: val,
+                        method: '최근 기록 기준',
+                        shortLabel: `평균 ${val}일`,
+                        isMedian: false
+                    };
+                }
+
+                // 2개 또는 3개 간격이 있을 때 평균과 중앙값 계산 및 이상치 판별
+                const sum = intervals.reduce((a, b) => a + b, 0);
+                const mean = sum / intervals.length;
+
+                const sorted = [...intervals].sort((a, b) => a - b);
+                const mid = Math.floor(sorted.length / 2);
+                const medianRaw = sorted.length % 2 !== 0
+                    ? sorted[mid]
+                    : (sorted[mid - 1] + sorted[mid]) / 2;
+
+                const minVal = sorted[0];
+                const maxVal = sorted[sorted.length - 1];
+
+                // 이상치 판별: 평균 대비 40% 초과 편차 또는 3일 초과 차이, 또는 최대/최소 비율 1.8배 이상
+                const hasOutlier = intervals.some(v =>
+                    Math.abs(v - mean) > mean * 0.4 || Math.abs(v - mean) > 3
+                ) || (minVal > 0 && maxVal / minVal >= 1.8);
+
+                if (hasOutlier) {
+                    const medVal = Math.max(1, Math.round(medianRaw));
+                    return {
+                        interval: medVal,
+                        method: `최근 ${recentDates.length}회 중앙값 보정`,
+                        shortLabel: `중앙값 ${medVal}일`,
+                        isMedian: true
+                    };
+                }
+
+                const avgVal = Math.max(1, Math.round(mean));
+                return {
+                    interval: avgVal,
+                    method: `최근 ${recentDates.length}회 평균`,
+                    shortLabel: `평균 ${avgVal}일`,
+                    isMedian: false
+                };
+            }
+
+            // =========================================================
+            // 식물별 핵심 지표 계산
+            // =========================================================
+            function computePlantStats(plant) {
+                const today = getTodayStr();
+                const sortedLogs = [...plant.logs].sort((a, b) => a.date.localeCompare(b.date));
+
+                // 1) 현재 총 잎 수: 'new_leaf'(신엽 펴짐)만 +1, 'drop_leaf'(하엽 짐)만 -1
+                // 'sprout'(새순 돋음)는 잎 수 변동 없음 (+0)
+                let currentLeaves = Number(plant.baseLeaves || 0);
+                sortedLogs.forEach(log => {
+                    if (log.type === 'new_leaf') currentLeaves += 1;
+                    else if (log.type === 'drop_leaf') currentLeaves = Math.max(0, currentLeaves - 1);
+                });
+
+                // 2) 스마트 물주기 계산 (최근 4회 기준 + 이상치 중앙값 보정)
+                const waterDates = sortedLogs.filter(l => l.type === 'water').map(l => l.date);
+                const uniqueWaterDates = Array.from(new Set(waterDates)).sort();
+                const smartWater = calculateSmartWaterCycle(uniqueWaterDates, plant.defaultInterval);
+
+                const lastWaterDate = uniqueWaterDates.length > 0
+                    ? uniqueWaterDates[uniqueWaterDates.length - 1]
+                    : (plant.initialLastWatered || today);
+
+                const nextWaterDate = addDaysStr(lastWaterDate, smartWater.interval);
+                const daysUntilWater = diffDays(today, nextWaterDate);
+
+                let waterStatus = 'ok';
+                if (daysUntilWater <= 0) waterStatus = 'urgent';
+                else if (daysUntilWater <= 4) waterStatus = 'soon';
+
+                // 3) 신엽 개엽 & 하엽 진행 소요 주기 계산
+                let pendingNewStart = null;
+                const newLeafDurations = [];
+                let pendingDropStart = null;
+                const dropLeafDurations = [];
+                const logDurations = {};
+
+                sortedLogs.forEach(log => {
+                    if (log.type === 'new_leaf_start') {
+                        pendingNewStart = log.date;
+                    } else if (log.type === 'new_leaf') {
+                        if (pendingNewStart) {
+                            const d = Math.max(0, diffDays(pendingNewStart, log.date));
+                            newLeafDurations.push(d);
+                            logDurations[log.id] = d;
+                            pendingNewStart = null;
+                        }
+                    } else if (log.type === 'drop_leaf_start') {
+                        pendingDropStart = log.date;
+                    } else if (log.type === 'drop_leaf') {
+                        if (pendingDropStart) {
+                            const d = Math.max(0, diffDays(pendingDropStart, log.date));
+                            dropLeafDurations.push(d);
+                            logDurations[log.id] = d;
+                            pendingDropStart = null;
+                        }
+                    }
+                });
+
+                const avgNewLeafDays = newLeafDurations.length > 0
+                    ? Math.round(newLeafDurations.reduce((a, b) => a + b, 0) / newLeafDurations.length)
+                    : null;
+
+                const avgDropLeafDays = dropLeafDurations.length > 0
+                    ? Math.round(dropLeafDurations.reduce((a, b) => a + b, 0) / dropLeafDurations.length)
+                    : null;
+
+                // 4) 분갈이 후 경과 일수 계산
+                const repotLogs = sortedLogs.filter(l => l.type === 'repot');
+                const lastRepotDate = repotLogs.length > 0 ? repotLogs[repotLogs.length - 1].date : null;
+                const daysSinceRepot = lastRepotDate ? Math.max(0, diffDays(lastRepotDate, today)) : null;
+
+                // 4-2) 복토 후 경과 일수 계산
+                const topdressLogs = sortedLogs.filter(l => l.type === 'topdress');
+                const lastTopdressDate = topdressLogs.length > 0 ? topdressLogs[topdressLogs.length - 1].date : null;
+                const daysSinceTopdress = lastTopdressDate ? Math.max(0, diffDays(lastTopdressDate, today)) : null;
+
+                // 5) 비료(영양제) 후 경과 일수 계산
+                const fertLogs = sortedLogs.filter(l => l.type === 'fertilizer');
+                const lastFertDate = fertLogs.length > 0 ? fertLogs[fertLogs.length - 1].date : null;
+                const daysSinceFertilizer = lastFertDate ? Math.max(0, diffDays(lastFertDate, today)) : null;
+
+                // 6) 최근 14일 이내 성장/분갈이 이력 여부
+                const hasRecentCare = sortedLogs.some(l => {
+                    if (l.type === 'water') return false;
+                    const age = diffDays(l.date, today);
+                    return age >= 0 && age <= 14;
+                });
+
+                // 7) 입양일 D+일수
+                const adoptedDays = plant.adoptedDate ? Math.max(0, diffDays(plant.adoptedDate, today)) : null;
+
+                return {
+                    currentLeaves,
+                    avgWaterInterval: smartWater.interval,
+                    waterCalcMethod: smartWater.method,
+                    waterShortLabel: smartWater.shortLabel,
+                    isMedianWater: smartWater.isMedian,
+                    lastWaterDate,
+                    nextWaterDate,
+                    daysUntilWater,
+                    waterStatus,
+                    avgNewLeafDays,
+                    avgDropLeafDays,
+                    logDurations,
+                    lastRepotDate,
+                    daysSinceRepot,
+                    lastTopdressDate,
+                    daysSinceTopdress,
+                    lastFertDate,
+                    daysSinceFertilizer,
+                    hasRecentCare,
+                    adoptedDays
+                };
+            }
+
+            // =========================================================
+            // 장소 UI 동기화
+            // =========================================================
+            function syncLocationUIs() {
+                const filterSelect = document.getElementById('location-filter-select');
+                const prevVal = filterSelect.value || activeLocationFilter;
+                filterSelect.innerHTML = `<option value="all">📍 전체 장소</option>`;
+                customLocations.forEach(loc => {
+                    const cnt = plants.filter(p => (p.location || '') === loc).length;
+                    const opt = document.createElement('option');
+                    opt.value = loc;
+                    opt.textContent = `📍 ${loc} (${cnt})`;
+                    filterSelect.appendChild(opt);
+                });
+                const unassignedCnt = plants.filter(p => !p.location).length;
+                if (unassignedCnt > 0) {
+                    const opt = document.createElement('option');
+                    opt.value = '__unassigned__';
+                    opt.textContent = `📍 미지정 (${unassignedCnt})`;
+                    filterSelect.appendChild(opt);
+                }
+                filterSelect.value = Array.from(filterSelect.options).some(o => o.value === prevVal) ? prevVal : 'all';
+                activeLocationFilter = filterSelect.value;
+
+                renderLocationChips('plant-loc-chips', selectedPlantLoc, val => {
+                    selectedPlantLoc = val;
+                    syncLocationUIs();
+                });
+
+                renderLocationChips('log-move-loc-chips', selectedMoveLoc, val => {
+                    selectedMoveLoc = val;
+                    syncLocationUIs();
+                });
+            }
+
+            function renderLocationChips(containerId, currentVal, onSelect) {
+                const wrap = document.getElementById(containerId);
+                if (!wrap) return;
+                wrap.innerHTML = '';
+
+                const allChoices = ['미지정', ...customLocations];
+                allChoices.forEach(loc => {
+                    const isUnassigned = loc === '미지정';
+                    const actualVal = isUnassigned ? '' : loc;
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'loc-select-chip' + ((currentVal || '') === actualVal ? ' active' : '');
+                    btn.textContent = isUnassigned ? '미지정' : `📍 ${loc}`;
+                    btn.addEventListener('click', () => onSelect(actualVal));
+                    wrap.appendChild(btn);
+                });
+            }
+
+            function addLocationName(rawName) {
+                const clean = String(rawName || '').trim();
+                if (!clean || clean === '미지정' || clean === '전체 장소') {
+                    showToast('올바른 장소 이름을 입력해 주세요.');
+                    return null;
+                }
+                if (!customLocations.includes(clean)) {
+                    customLocations.push(clean);
+                    saveState(true);
+                    showToast(`'${clean}' 장소가 추가되었습니다.`);
+                }
+                return clean;
+            }
+
+            function renderManageLocations() {
+                const listEl = document.getElementById('manage-loc-list');
+                listEl.innerHTML = '';
+                if (customLocations.length === 0) {
+                    listEl.innerHTML = '<div style="font-size:12px;color:var(--text-sub);text-align:center;padding:12px;">등록된 장소가 없습니다.</div>';
+                    return;
+                }
+                customLocations.forEach(loc => {
+                    const count = plants.filter(p => p.location === loc).length;
+                    const row = document.createElement('div');
+                    row.className = 'manage-loc-item';
+                    row.innerHTML = `
+                        <span>📍 ${escapeHtml(loc)} <small style="color:var(--text-sub);font-weight:600;">(${count}종)</small></span>
+                        <button type="button" class="btn-del-log" data-del-loc="${escapeHtml(loc)}">삭제</button>
+                    `;
+                    listEl.appendChild(row);
+                });
+            }
+
+            // =========================================================
+            // 식물 목록 렌더링
+            // =========================================================
+            function renderPlantList() {
+                const searchVal = document.getElementById('search-input').value.trim().toLowerCase();
+                let urgentCount = 0;
+                let due4Count = 0;
+                let recentCareCount = 0;
+                const speciesSet = new Set();
+
+                const enriched = plants.map(p => {
+                    const stats = computePlantStats(p);
+                    if (stats.daysUntilWater <= 0) urgentCount++;
+                    if (stats.daysUntilWater <= 4) due4Count++;
+                    if (stats.hasRecentCare) recentCareCount++;
+
+                    // 품종명 집계: 입력된 품종명이 있으면 품종명 기준, 없으면 식물 이름 기준으로 중복 제거
+                    const cultivarKey = (p.species || p.name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                    if (cultivarKey) speciesSet.add(cultivarKey);
+
+                    return { plant: p, stats };
+                });
+
+                // 상단 대시보드 4칸 업데이트
+                document.getElementById('stat-total').textContent = plants.length;
+                document.getElementById('stat-species').textContent = speciesSet.size;
+                document.getElementById('stat-urgent').textContent = urgentCount;
+                document.getElementById('stat-due4').textContent = due4Count;
+
+                // 필터 칩 카운트 업데이트
+                document.getElementById('chip-all').textContent = `전체 보기 (${plants.length})`;
+                document.getElementById('chip-urgent').textContent = `🚨 오늘 물 줄 식물 (${urgentCount})`;
+                document.getElementById('chip-due4').textContent = `💧 4일 이내 물 줄 식물 (${due4Count})`;
+                document.getElementById('chip-recent').textContent = `🌱 최근 성장/분갈이 (${recentCareCount})`;
+
+                // 필터링
+                let filtered = enriched.filter(({ plant, stats }) => {
+                    if (activeStatusFilter === 'urgent' && stats.daysUntilWater > 0) return false;
+                    if (activeStatusFilter === 'due4' && stats.daysUntilWater > 4) return false;
+                    if (activeStatusFilter === 'recent_care' && !stats.hasRecentCare) return false;
+
+                    if (activeLocationFilter === '__unassigned__' && plant.location) return false;
+                    if (activeLocationFilter !== 'all' && activeLocationFilter !== '__unassigned__' && plant.location !== activeLocationFilter) return false;
+
+                    if (searchVal) {
+                        const hay = [
+                            plant.name,
+                            plant.species,
+                            plant.location,
+                            plant.soilMix,
+                            plant.specialNote,
+                            ...plant.logs.map(l => l.note)
+                        ].join(' ').toLowerCase();
+                        if (!hay.includes(searchVal)) return false;
+                    }
+                    return true;
+                });
+
+                // 정렬
+                filtered.sort((a, b) => {
+                    if (currentSort === 'water_asc') {
+                        return a.stats.daysUntilWater - b.stats.daysUntilWater;
+                    }
+                    if (currentSort === 'adopt_asc') {
+                        const da = a.plant.adoptedDate || '9999-12-31';
+                        const db = b.plant.adoptedDate || '9999-12-31';
+                        return da.localeCompare(db);
+                    }
+                    if (currentSort === 'adopt_desc') {
+                        const da = a.plant.adoptedDate || '0000-01-01';
+                        const db = b.plant.adoptedDate || '0000-01-01';
+                        return db.localeCompare(da);
+                    }
+                    if (currentSort === 'name_asc') {
+                        return a.plant.name.localeCompare(b.plant.name, 'ko');
+                    }
+                    if (currentSort === 'loc_asc') {
+                        const la = a.plant.location || '힣';
+                        const lb = b.plant.location || '힣';
+                        return la.localeCompare(lb, 'ko');
+                    }
+                    return 0;
+                });
+
+                const container = document.getElementById('plant-list-container');
+                container.innerHTML = '';
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-box">
+                            <div style="font-size:32px; margin-bottom:8px;">🪴</div>
+                            <div style="font-weight:800; color:var(--text-main); margin-bottom:4px;">해당 조건의 식물이 없습니다</div>
+                            <div style="font-size:12px;">다른 필터 탭을 선택하거나 상단의 <strong>[＋ 새 식물 등록]</strong>을 눌러 추가해 보세요!</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                filtered.forEach(({ plant, stats }) => {
+                    const card = document.createElement('article');
+                    card.className = `plant-card ${stats.waterStatus}`;
+
+                    let ddayText = '';
+                    let ddayClass = 'dday-ok';
+                    if (stats.daysUntilWater < 0) {
+                        ddayText = `🚨 ${Math.abs(stats.daysUntilWater)}일 지남`;
+                        ddayClass = 'dday-urgent';
+                    } else if (stats.daysUntilWater === 0) {
+                        ddayText = '💧 오늘 물주기!';
+                        ddayClass = 'dday-urgent';
+                    } else if (stats.daysUntilWater === 1) {
+                        ddayText = '⏳ 내일 물주기 (D-1)';
+                        ddayClass = 'dday-soon';
+                    } else if (stats.daysUntilWater <= 4) {
+                        ddayText = `💧 D-${stats.daysUntilWater}`;
+                        ddayClass = 'dday-soon';
+                    } else {
+                        ddayText = `D-${stats.daysUntilWater}`;
+                        ddayClass = 'dday-ok';
+                    }
+
+                    const thumbHtml = plant.photo
+                        ? `<img src="${plant.photo}" alt="${escapeHtml(plant.name)}">`
+                        : '🪴';
+
+                    const locBadge = plant.location
+                        ? `<span class="meta-pill loc">📍 ${escapeHtml(plant.location)}</span>`
+                        : `<span class="meta-pill">📍 미지정</span>`;
+
+                    const adoptBadge = plant.adoptedDate
+                        ? `<span class="meta-pill adopt">🏡 ${formatDotDate(plant.adoptedDate)} (D+${stats.adoptedDays})</span>`
+                        : '';
+
+                    const repotBadge = stats.daysSinceRepot !== null
+                        ? `<span class="meta-pill repot">🪴 ${stats.daysSinceRepot === 0 ? '오늘 분갈이' : `분갈이 후 ${stats.daysSinceRepot}일`}</span>`
+                        : '';
+
+                    const topdressBadge = stats.daysSinceTopdress !== null
+                        ? `<span class="meta-pill topdress">⛰️ ${stats.daysSinceTopdress === 0 ? '오늘 복토' : `복토 후 ${stats.daysSinceTopdress}일`}</span>`
+                        : '';
+
+                    const fertBadge = stats.daysSinceFertilizer !== null
+                        ? `<span class="meta-pill fert">🧪 ${stats.daysSinceFertilizer === 0 ? '오늘 비료' : `비료 후 ${stats.daysSinceFertilizer}일`}</span>`
+                        : '';
+
+                    const soilBadge = plant.soilMix
+                        ? `<span class="meta-pill soil">🧱 ${escapeHtml(plant.soilMix)}</span>`
+                        : '';
+
+                    const newLeafStr = stats.avgNewLeafDays !== null ? `평균 ${stats.avgNewLeafDays}일` : '기록 대기';
+                    const dropLeafStr = stats.avgDropLeafDays !== null ? `평균 ${stats.avgDropLeafDays}일` : '기록 대기';
+
+                    card.innerHTML = `
+                        <div class="card-top">
+                            <div class="plant-thumb" data-detail-id="${plant.id}">${thumbHtml}</div>
+                            <div class="card-info">
+                                <div class="card-title-row">
+                                    <div class="plant-name" data-detail-id="${plant.id}">${escapeHtml(plant.name)}</div>
+                                    <span class="dday-badge ${ddayClass}">${ddayText}</span>
+                                </div>
+                                ${plant.species ? `<div class="plant-species">🏷️ 품종: ${escapeHtml(plant.species)}</div>` : ''}
+                                <div class="meta-badges">
+                                    ${locBadge}
+                                    ${adoptBadge}
+                                    ${repotBadge}
+                                    ${topdressBadge}
+                                    ${fertBadge}
+                                    ${soilBadge}
+                                    <span class="meta-pill leaf">🍃 ${stats.currentLeaves}장</span>
+                                    <span class="meta-pill cycle">💧 ${stats.waterShortLabel}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cycle-summary-strip">
+                            <span>🌱 신엽 개엽: <strong>${newLeafStr}</strong></span>
+                            <span>🍂 하엽 진행: <strong>${dropLeafStr}</strong></span>
+                            <span>📅 다음 물: <strong>${formatDotDate(stats.nextWaterDate)}</strong></span>
+                        </div>
+                        <div class="card-actions">
+                            <button type="button" class="btn btn-blue-soft" data-quick-water="${plant.id}">💧 오늘 물주기</button>
+                            <button type="button" class="btn btn-green-soft" data-open-log="${plant.id}">🌿 기록</button>
+                            <button type="button" class="btn btn-outline" data-detail-id="${plant.id}">상세</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            // =========================================================
+            // 월간 물주기 & 관리 캘린더 렌더링
+            // =========================================================
+            function renderCalendar() {
+                document.getElementById('cal-month-title').textContent = `${calYear}년 ${calMonth + 1}월`;
+                const grid = document.getElementById('cal-grid');
+                grid.innerHTML = '';
+
+                const firstDay = new Date(calYear, calMonth, 1).getDay();
+                const lastDate = new Date(calYear, calMonth + 1, 0).getDate();
+                const todayStr = getTodayStr();
+
+                const eventMap = {};
+                function pushEvent(dateStr, type, plant, detailText = '') {
+                    if (!eventMap[dateStr]) eventMap[dateStr] = [];
+                    eventMap[dateStr].push({ type, plant, detailText });
+                }
+
+                plants.forEach(p => {
+                    const stats = computePlantStats(p);
+                    pushEvent(stats.nextWaterDate, 'scheduled', p);
+                    p.logs.forEach(l => {
+                        if (l.type === 'water') pushEvent(l.date, 'watered', p);
+                        else if (l.type === 'repot') pushEvent(l.date, 'repot', p);
+                        else if (l.type === 'topdress') pushEvent(l.date, 'topdress', p);
+                        else if (l.type === 'fertilizer') pushEvent(l.date, 'fertilizer', p);
+                        else pushEvent(l.date, 'growth', p, (LOG_TYPE_META[l.type]?.label || '관리 기록'));
+                    });
+                });
+
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.className = 'cal-cell other-month';
+                    grid.appendChild(emptyCell);
+                }
+
+                for (let day = 1; day <= lastDate; day++) {
+                    const dateStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const cell = document.createElement('div');
+                    cell.className = 'cal-cell';
+                    if (dateStr === todayStr) cell.classList.add('today');
+                    if (dateStr === calSelectedDate) cell.classList.add('selected');
+
+                    const evs = eventMap[dateStr] || [];
+                    const icons = [];
+                    if (evs.some(e => e.type === 'watered')) icons.push('💧');
+                    if (evs.some(e => e.type === 'scheduled')) icons.push('🔔');
+                    if (evs.some(e => e.type === 'repot')) icons.push('🪴');
+                    if (evs.some(e => e.type === 'topdress')) icons.push('⛰️');
+                    if (evs.some(e => e.type === 'fertilizer')) icons.push('🧪');
+                    if (evs.some(e => e.type === 'growth')) icons.push('🌱');
+
+                    cell.innerHTML = `
+                        <span class="cal-day-num">${day}</span>
+                        <div class="cal-dots">${icons.join('')}</div>
+                    `;
+                    cell.addEventListener('click', () => {
+                        calSelectedDate = dateStr;
+                        renderCalendar();
+                    });
+                    grid.appendChild(cell);
+                }
+
+                const detailEl = document.getElementById('cal-day-detail');
+                const dayEvents = eventMap[calSelectedDate] || [];
+                let html = `<div style="font-size:13.5px; font-weight:800; margin-bottom:8px;">📅 ${formatDotDate(calSelectedDate)} 일정 (${dayEvents.length}건)</div>`;
+
+                if (dayEvents.length === 0) {
+                    html += `<div style="font-size:12px; color:var(--text-sub);">이 날짜에 기록되거나 예정된 일정이 없습니다.</div>`;
+                } else {
+                    html += `<div style="display:flex; flex-direction:column; gap:6px;">`;
+                    dayEvents.forEach(ev => {
+                        let badge = '';
+                        if (ev.type === 'scheduled') badge = `<span class="meta-pill cycle">🔔 물 줄 예정</span>`;
+                        else if (ev.type === 'watered') badge = `<span class="meta-pill adopt">💧 물주기 완료</span>`;
+                        else if (ev.type === 'repot') badge = `<span class="meta-pill repot">🪴 분갈이</span>`;
+                        else if (ev.type === 'topdress') badge = `<span class="meta-pill topdress">⛰️ 복토</span>`;
+                        else if (ev.type === 'fertilizer') badge = `<span class="meta-pill loc">🧪 영양제</span>`;
+                        else badge = `<span class="meta-pill leaf">🌱 ${escapeHtml(ev.detailText || '상태 기록')}</span>`;
+
+                        html += `
+                            <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 10px; border:1px solid var(--border); border-radius:10px; font-size:12.5px;">
+                                <div>
+                                    <strong>${escapeHtml(ev.plant.name)}</strong>
+                                    <span style="margin-left:6px;">${badge}</span>
+                                </div>
+                                ${ev.type === 'scheduled' ? `<button type="button" class="tool-chip-btn green" data-quick-water="${ev.plant.id}">💧 물주기</button>` : ''}
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+                detailEl.innerHTML = html;
+            }
+
+            // =========================================================
+            // 모달 열기 / 처리 로직
+            // =========================================================
+            function openPlantModal(plantId = null) {
+                const form = document.getElementById('form-plant');
+                form.reset();
+                draftPlantPhoto = '';
+                document.getElementById('plant-photo-preview-wrap').classList.add('hidden');
+                document.getElementById('plant-photo-btn-label').textContent = '📷 사진 선택';
+
+                if (plantId) {
+                    const p = plants.find(item => item.id === plantId);
+                    if (!p) return;
+                    const stats = computePlantStats(p);
+                    document.getElementById('modal-plant-title').textContent = '식물 정보 수정';
+                    document.getElementById('plant-edit-id').value = p.id;
+                    document.getElementById('plant-name').value = p.name;
+                    document.getElementById('plant-species').value = p.species;
+                    document.getElementById('plant-leaves').value = stats.currentLeaves;
+                    document.getElementById('plant-interval').value = p.defaultInterval;
+                    document.getElementById('plant-adopted').value = p.adoptedDate || '';
+                    document.getElementById('plant-last-watered').value = stats.lastWaterDate || getTodayStr();
+                    document.getElementById('plant-soil-mix').value = p.soilMix || '';
+                    document.getElementById('plant-special-note').value = p.specialNote || '';
+                    selectedPlantLoc = p.location || '';
+                    if (p.photo) {
+                        draftPlantPhoto = p.photo;
+                        document.getElementById('plant-photo-preview').src = p.photo;
+                        document.getElementById('plant-photo-preview-wrap').classList.remove('hidden');
+                        document.getElementById('plant-photo-btn-label').textContent = '📷 다른 사진으로 변경';
+                    }
+                } else {
+                    document.getElementById('modal-plant-title').textContent = '새 식물 등록';
+                    document.getElementById('plant-edit-id').value = '';
+                    document.getElementById('plant-leaves').value = 5;
+                    document.getElementById('plant-interval').value = 7;
+                    document.getElementById('plant-adopted').value = getTodayStr();
+                    document.getElementById('plant-last-watered').value = getTodayStr();
+                    document.getElementById('plant-soil-mix').value = '';
+                    document.getElementById('plant-special-note').value = '';
+                    selectedPlantLoc = customLocations[0] || '';
+                }
+
+                syncLocationUIs();
+                openModal('modal-plant');
+            }
+
+            function openLogModal(plantId, initialType = 'water') {
+                const p = plants.find(item => item.id === plantId);
+                if (!p) return;
+
+                document.getElementById('form-log').reset();
+                document.getElementById('log-plant-id').value = p.id;
+                document.getElementById('modal-log-title').textContent = `🌿 ${p.name} - 상태 기록`;
+                document.getElementById('log-date').value = getTodayStr();
+
+                draftLogPhoto = '';
+                document.getElementById('log-photo-preview-wrap').classList.add('hidden');
+                document.getElementById('log-photo-btn-label').textContent = '📷 사진 선택';
+
+                selectedLogType = initialType;
+                selectedMoveLoc = customLocations.find(l => l !== p.location) || customLocations[0] || '';
+                updateLogTypeUI();
+                syncLocationUIs();
+                openModal('modal-log');
+            }
+
+            function updateLogTypeUI() {
+                document.querySelectorAll('#log-type-grid .log-type-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.type === selectedLogType);
+                });
+                const moveGroup = document.getElementById('log-move-loc-group');
+                moveGroup.classList.toggle('hidden', selectedLogType !== 'move');
+
+                const noteInput = document.getElementById('log-note');
+                const placeholders = {
+                    water: '예: 저면관수 20분, 겉흙 마름 확인 후 관수',
+                    sprout: '예: 마디에서 새순 눈이 올라옴 (잎 수 변동 없음)',
+                    new_leaf_start: '예: 새 잎이 돌돌 말린 채 올라오기 시작',
+                    new_leaf: '예: 새 잎이 활짝 펴짐 (+1잎 반영)',
+                    drop_leaf_start: '예: 아래쪽 잎 끝이 노랗게 변하기 시작',
+                    drop_leaf: '예: 하엽 정리 완료 (-1잎 반영)',
+                    move: '예: 햇빛이 더 잘 드는 창가로 이동',
+                    repot: '예: 슬릿분 15호로 분갈이 (배수층 마사토 + 상토)',
+                    topdress: '예: 윗흙 보충 및 마사토/녹소토 복토 마감',
+                    fertilizer: '예: 알약 영양제 2알 / 액비 희석 관수',
+                    note: '예: 잎 닦아줌, 병해충 예방 분무'
+                };
+                noteInput.placeholder = placeholders[selectedLogType] || '상세 메모를 입력하세요';
+            }
+
+            function openDetailModal(plantId) {
+                const p = plants.find(item => item.id === plantId);
+                if (!p) return;
+                const stats = computePlantStats(p);
+
+                document.getElementById('detail-title').textContent = p.name;
+                const body = document.getElementById('detail-body');
+
+                const reversedLogs = [...p.logs].sort((a, b) => b.date.localeCompare(a.date));
+                let timelineHtml = '';
+                if (reversedLogs.length === 0) {
+                    timelineHtml = `<div style="font-size:12px; color:var(--text-sub); text-align:center; padding:16px;">아직 등록된 상태 기록이 없습니다.</div>`;
+                } else {
+                    reversedLogs.forEach(log => {
+                        const meta = LOG_TYPE_META[log.type] || LOG_TYPE_META.note;
+                        const dur = stats.logDurations[log.id];
+                        const durBadge = dur !== undefined ? `<span class="duration-pill">⏱ ${dur}일 소요</span>` : '';
+                        const moveText = log.type === 'move' && (log.fromLoc || log.toLoc)
+                            ? ` (${escapeHtml(log.fromLoc || '미지정')} → ${escapeHtml(log.toLoc || '미지정')})`
+                            : '';
+
+                        timelineHtml += `
+                            <div class="timeline-item">
+                                <div class="timeline-top">
+                                    <div class="timeline-badge">
+                                        <span>${meta.icon} ${meta.label}${moveText}</span>
+                                        ${durBadge}
+                                    </div>
+                                    <div class="timeline-date-del">
+                                        <span>${formatDotDate(log.date)}</span>
+                                        <button type="button" class="btn-del-log" data-del-log="${log.id}" data-plant-id="${p.id}">삭제</button>
+                                    </div>
+                                </div>
+                                ${log.note ? `<div style="font-size:12.5px; color:var(--text-main);">${escapeHtml(log.note)}</div>` : ''}
+                                ${log.photo ? `<img class="timeline-photo" src="${log.photo}" alt="기록 사진" data-lightbox="${log.photo}">` : ''}
+                            </div>
+                        `;
+                    });
+                }
+
+                const repotStatText = stats.daysSinceRepot !== null
+                    ? (stats.daysSinceRepot === 0 ? `오늘 (${formatDotDate(stats.lastRepotDate)})` : `후 ${stats.daysSinceRepot}일째 (${formatDotDate(stats.lastRepotDate)})`)
+                    : '기록 없음';
+
+                const topdressStatText = stats.daysSinceTopdress !== null
+                    ? (stats.daysSinceTopdress === 0 ? `오늘 (${formatDotDate(stats.lastTopdressDate)})` : `후 ${stats.daysSinceTopdress}일째 (${formatDotDate(stats.lastTopdressDate)})`)
+                    : '기록 없음';
+
+                const fertStatText = stats.daysSinceFertilizer !== null
+                    ? (stats.daysSinceFertilizer === 0 ? `오늘 (${formatDotDate(stats.lastFertDate)})` : `후 ${stats.daysSinceFertilizer}일째 (${formatDotDate(stats.lastFertDate)})`)
+                    : '기록 없음';
+
+                const leafCycleSummary = `신엽 ${stats.avgNewLeafDays !== null ? stats.avgNewLeafDays + '일' : '-'} / 하엽 ${stats.avgDropLeafDays !== null ? stats.avgDropLeafDays + '일' : '-'}`;
+
+                const profileMemoHtml = (p.soilMix || p.specialNote) ? `
+                    <div class="profile-memo-box">
+                        ${p.soilMix ? `
+                        <div class="profile-memo-row">
+                            <span class="profile-memo-label">🪴 현재 흙배합</span>
+                            <span class="profile-memo-val">${escapeHtml(p.soilMix)}</span>
+                        </div>` : ''}
+                        ${p.specialNote ? `
+                        <div class="profile-memo-row">
+                            <span class="profile-memo-label">📌 특이사항 메모</span>
+                            <span class="profile-memo-val">${escapeHtml(p.specialNote)}</span>
+                        </div>` : ''}
+                    </div>
+                ` : '';
+
+                body.innerHTML = `
+                    ${p.photo ? `<img src="${p.photo}" alt="${escapeHtml(p.name)}" data-lightbox="${p.photo}" style="width:100%; max-height:200px; object-fit:cover; border-radius:14px; cursor:pointer; border:1px solid var(--border);">` : ''}
+                    <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                        <span class="meta-pill loc">📍 ${escapeHtml(p.location || '미지정')}</span>
+                        ${p.adoptedDate ? `<span class="meta-pill adopt">🏡 입양일 ${formatDotDate(p.adoptedDate)} (D+${stats.adoptedDays})</span>` : ''}
+                        ${p.species ? `<span class="meta-pill">🏷️ 품종: ${escapeHtml(p.species)}</span>` : ''}
+                    </div>
+                    ${profileMemoHtml}
+                    <div class="detail-stats-grid">
+                        <div class="detail-stat-box">
+                            <div class="lbl">💧 스마트 물주기</div>
+                            <div class="val">${stats.avgWaterInterval}일마다</div>
+                            <div class="sub">${escapeHtml(stats.waterCalcMethod)}</div>
+                        </div>
+                        <div class="detail-stat-box">
+                            <div class="lbl">🍃 현재 총 잎 수</div>
+                            <div class="val">${stats.currentLeaves}장</div>
+                            <div class="sub">다음 물: ${formatDotDate(stats.nextWaterDate)}</div>
+                        </div>
+                        <div class="detail-stat-box">
+                            <div class="lbl">🪴 최근 분갈이 경과</div>
+                            <div class="val">${repotStatText}</div>
+                        </div>
+                        <div class="detail-stat-box">
+                            <div class="lbl">⛰️ 최근 복토 경과</div>
+                            <div class="val">${topdressStatText}</div>
+                        </div>
+                        <div class="detail-stat-box">
+                            <div class="lbl">🧪 최근 비료(영양제) 경과</div>
+                            <div class="val">${fertStatText}</div>
+                        </div>
+                        <div class="detail-stat-box">
+                            <div class="lbl">🌱 신엽 / 🍂 하엽 주기</div>
+                            <div class="val">${leafCycleSummary}</div>
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 0.7fr; gap:7px;">
+                        <button type="button" class="btn btn-green-soft" id="btn-detail-add-log">🌿 + 상태 기록</button>
+                        <button type="button" class="btn btn-outline" id="btn-detail-edit">✏️ 정보 수정</button>
+                        <button type="button" class="btn btn-outline" id="btn-detail-delete" style="color:var(--red); border-color:#fecaca;">삭제</button>
+                    </div>
+                    <div style="margin-top:4px;">
+                        <div style="font-size:13px; font-weight:800; margin-bottom:8px;">📜 성장 및 관리 타임라인 (${p.logs.length})</div>
+                        <div class="timeline-list">${timelineHtml}</div>
+                    </div>
+                `;
+
+                document.getElementById('btn-detail-add-log').addEventListener('click', () => {
+                    closeModal('modal-detail');
+                    openLogModal(p.id);
+                });
+                document.getElementById('btn-detail-edit').addEventListener('click', () => {
+                    closeModal('modal-detail');
+                    openPlantModal(p.id);
+                });
+                document.getElementById('btn-detail-delete').addEventListener('click', () => {
+                    openConfirm(
+                        '식물 삭제 확인',
+                        `'${p.name}' 식물과 모든 관리 타임라인을 삭제할까요?`,
+                        () => {
+                            plants = plants.filter(item => item.id !== p.id);
+                            saveState(true);
+                            syncLocationUIs();
+                            renderPlantList();
+                            if (activeTab === 'calendar') renderCalendar();
+                            closeModal('modal-detail');
+                            showToast('식물이 삭제되었습니다.');
+                        }
+                    );
+                });
+
+                openModal('modal-detail');
+            }
+
+            // =========================================================
+            // 백업 / 복원 / 엑셀(CSV) 내보내기
+            // =========================================================
+            function triggerFileDownload(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 400);
+            }
+
+            function exportBackupJSON() {
+                const now = new Date();
+                const timeStr = `${getTodayStr()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                lastBackupAt = timeStr;
+                dirtySinceBackup = false;
+                saveState(false);
+
+                const exportObj = {
+                    app: 'PlantButler',
+                    version: 4,
+                    exportedAt: now.toISOString(),
+                    customLocations: customLocations,
+                    plants: plants
+                };
+                const jsonStr = JSON.stringify(exportObj, null, 2);
+                triggerFileDownload(
+                    new Blob([jsonStr], { type: 'application/json;charset=utf-8' }),
+                    `plant_journal_${getTodayStr()}.json`
+                );
+                showToast(`📤 백업 파일(plant_journal_${getTodayStr()}.json)이 저장되었습니다!`);
+            }
+
+            function importBackupJSON(file) {
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        const parsed = JSON.parse(evt.target.result);
+                        let list = [];
+                        if (Array.isArray(parsed)) {
+                            list = parsed;
+                        } else if (parsed && Array.isArray(parsed.plants)) {
+                            list = parsed.plants;
+                            if (Array.isArray(parsed.customLocations)) {
+                                parsed.customLocations.forEach(loc => {
+                                    if (loc && !customLocations.includes(loc)) customLocations.push(loc);
+                                });
+                            }
+                        } else {
+                            throw new Error('Invalid format');
+                        }
+
+                        plants = list.map((p, i) => normalizePlant(p, i));
+                        plants.forEach(p => {
+                            if (p.location && !customLocations.includes(p.location)) customLocations.push(p.location);
+                        });
+
+                        lastBackupAt = `${getTodayStr()} (복원됨)`;
+                        dirtySinceBackup = false;
+                        saveState(false);
+                        syncLocationUIs();
+                        renderPlantList();
+                        if (activeTab === 'calendar') renderCalendar();
+                        showToast(`📥 총 ${plants.length}종의 식물 기록을 불러왔습니다!`);
+                    } catch (err) {
+                        showToast('⚠️ 올바른 식물 일지 백업(.json) 파일이 아닙니다.');
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            function exportCSV() {
+                const headers = ['식물이름', '품종명', '현재장소', '흙배합', '특이사항메모', '입양일', '함께한일수', '현재잎수', '스마트물주기(일)', '산출방식', '마지막물준날', '다음물예정일', '최근분갈이일', '분갈이후경과(일)', '최근복토일', '복토후경과(일)', '최근비료일', '비료후경과(일)', '신엽개엽평균(일)', '하엽진행평균(일)'];
+                const rows = [headers.join(',')];
+
+                plants.forEach(p => {
+                    const s = computePlantStats(p);
+                    const cols = [
+                        `"${p.name.replace(/"/g, '""')}"`,
+                        `"${p.species.replace(/"/g, '""')}"`,
+                        `"${(p.location || '미지정').replace(/"/g, '""')}"`,
+                        `"${(p.soilMix || '').replace(/"/g, '""')}"`,
+                        `"${(p.specialNote || '').replace(/"/g, '""')}"`,
+                        p.adoptedDate || '',
+                        s.adoptedDays !== null ? s.adoptedDays : '',
+                        s.currentLeaves,
+                        s.avgWaterInterval,
+                        `"${s.waterCalcMethod}"`,
+                        s.lastWaterDate,
+                        s.nextWaterDate,
+                        s.lastRepotDate || '',
+                        s.daysSinceRepot !== null ? s.daysSinceRepot : '',
+                        s.lastTopdressDate || '',
+                        s.daysSinceTopdress !== null ? s.daysSinceTopdress : '',
+                        s.lastFertDate || '',
+                        s.daysSinceFertilizer !== null ? s.daysSinceFertilizer : '',
+                        s.avgNewLeafDays !== null ? s.avgNewLeafDays : '',
+                        s.avgDropLeafDays !== null ? s.avgDropLeafDays : ''
+                    ];
+                    rows.push(cols.join(','));
+                });
+
+                const bom = '\uFEFF' + rows.join('\n');
+                triggerFileDownload(
+                    new Blob([bom], { type: 'text/csv;charset=utf-8;' }),
+                    `plant_summary_${getTodayStr()}.csv`
+                );
+                showToast('📊 엑셀(CSV) 파일이 저장되었습니다!');
+            }
+
+            // =========================================================
+            // 이벤트 바인딩
+            // =========================================================
+            function setupPhotoHandlers(fileInputId, pasteZoneId, previewWrapId, previewImgId, btnLabelId, removeBtnId, isPlantPhoto) {
+                const fileInput = document.getElementById(fileInputId);
+                const pasteZone = document.getElementById(pasteZoneId);
+                const wrap = document.getElementById(previewWrapId);
+                const img = document.getElementById(previewImgId);
+                const label = document.getElementById(btnLabelId);
+                const removeBtn = document.getElementById(removeBtnId);
+
+                async function applyBlob(blob) {
+                    try {
+                        const compressed = await compressImageBlob(blob);
+                        if (isPlantPhoto) draftPlantPhoto = compressed;
+                        else draftLogPhoto = compressed;
+                        img.src = compressed;
+                        wrap.classList.remove('hidden');
+                        label.textContent = '📷 사진 첨부 완료 (변경 가능)';
+                        showToast('📷 사진이 첨부되었습니다!');
+                    } catch (e) {
+                        showToast('⚠️ 이미지를 처리하지 못했습니다.');
+                    }
+                }
+
+                fileInput.addEventListener('change', e => {
+                    const file = e.target.files && e.target.files[0];
+                    if (file) applyBlob(file);
+                    e.target.value = '';
+                });
+
+                pasteZone.addEventListener('paste', e => {
+                    const items = (e.clipboardData || window.clipboardData)?.items;
+                    if (!items) return;
+                    for (let i = 0; i < items.length; i++) {
+                        if (items[i].type.indexOf('image') !== -1) {
+                            e.preventDefault();
+                            const blob = items[i].getAsFile();
+                            if (blob) applyBlob(blob);
+                            pasteZone.textContent = '📋 갤러리 사진 복사 후 길게 눌러 붙여넣기';
+                            return;
+                        }
+                    }
+                });
+
+                pasteZone.addEventListener('input', () => {
+                    pasteZone.textContent = '📋 갤러리 사진 복사 후 길게 눌러 붙여넣기';
+                });
+
+                removeBtn.addEventListener('click', () => {
+                    if (isPlantPhoto) draftPlantPhoto = '';
+                    else draftLogPhoto = '';
+                    img.src = '';
+                    wrap.classList.add('hidden');
+                    label.textContent = '📷 사진 선택';
+                });
+            }
+
+            function bindEvents() {
+                document.getElementById('btn-theme-toggle').addEventListener('click', toggleTheme);
+                document.getElementById('btn-open-add').addEventListener('click', () => openPlantModal(null));
+                document.getElementById('btn-quick-export-json').addEventListener('click', exportBackupJSON);
+                document.getElementById('input-quick-import-json').addEventListener('change', e => {
+                    if (e.target.files && e.target.files[0]) importBackupJSON(e.target.files[0]);
+                    e.target.value = '';
+                });
+                document.getElementById('btn-quick-export-csv').addEventListener('click', exportCSV);
+
+                document.getElementById('btn-reset-sample').addEventListener('click', () => {
+                    openConfirm(
+                        '샘플 데이터 초기화',
+                        '현재 모든 식물 기록을 지우고 기본 샘플 식물 2종으로 되돌릴까요?',
+                        () => {
+                            plants = createSamplePlants();
+                            customLocations = DEFAULT_LOCATIONS.slice();
+                            saveState(true);
+                            syncLocationUIs();
+                            renderManageLocations();
+                            renderPlantList();
+                            if (activeTab === 'calendar') renderCalendar();
+                            closeModal('modal-locations');
+                            showToast('샘플 데이터로 초기화되었습니다.');
+                        },
+                        '초기화'
+                    );
+                });
+
+                // 뷰 전환 탭
+                document.querySelectorAll('.view-tab-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        activeTab = btn.dataset.tab;
+                        document.querySelectorAll('.view-tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+                        document.getElementById('view-list').classList.toggle('hidden', activeTab !== 'list');
+                        document.getElementById('view-calendar').classList.toggle('hidden', activeTab !== 'calendar');
+                        if (activeTab === 'calendar') renderCalendar();
+                    });
+                });
+
+                // 검색, 장소 필터, 정렬, 상태 필터
+                document.getElementById('search-input').addEventListener('input', renderPlantList);
+                document.getElementById('location-filter-select').addEventListener('change', e => {
+                    activeLocationFilter = e.target.value;
+                    renderPlantList();
+                });
+                document.getElementById('sort-select').addEventListener('change', e => {
+                    currentSort = e.target.value;
+                    saveState(false);
+                    renderPlantList();
+                });
+                document.querySelectorAll('#status-filter-chips .filter-chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        activeStatusFilter = chip.dataset.filter;
+                        document.querySelectorAll('#status-filter-chips .filter-chip').forEach(c => c.classList.toggle('active', c === chip));
+                        renderPlantList();
+                    });
+                });
+
+                // 장소 관리 모달
+                document.getElementById('btn-open-loc-manage').addEventListener('click', () => {
+                    renderManageLocations();
+                    openModal('modal-locations');
+                });
+                document.getElementById('btn-manage-add-loc').addEventListener('click', () => {
+                    const input = document.getElementById('manage-new-loc-input');
+                    const added = addLocationName(input.value);
+                    if (added) {
+                        input.value = '';
+                        syncLocationUIs();
+                        renderManageLocations();
+                    }
+                });
+                document.getElementById('manage-loc-list').addEventListener('click', e => {
+                    const delBtn = e.target.closest('[data-del-loc]');
+                    if (!delBtn) return;
+                    const locName = delBtn.dataset.delLoc;
+                    const affected = plants.filter(p => p.location === locName).length;
+                    openConfirm(
+                        '장소 삭제 확인',
+                        affected > 0
+                            ? `'${locName}' 장소를 삭제할까요?\n이 장소에 배치된 식물 ${affected}종의 위치는 '미지정'으로 바뀝니다.`
+                            : `'${locName}' 장소를 삭제할까요?`,
+                        () => {
+                            customLocations = customLocations.filter(l => l !== locName);
+                            plants.forEach(p => {
+                                if (p.location === locName) p.location = '';
+                            });
+                            saveState(true);
+                            syncLocationUIs();
+                            renderManageLocations();
+                            renderPlantList();
+                            showToast(`'${locName}' 장소가 삭제되었습니다.`);
+                        }
+                    );
+                });
+
+                // 식물 등록/수정 폼 내 장소 추가
+                document.getElementById('btn-add-loc-in-plant').addEventListener('click', () => {
+                    const input = document.getElementById('plant-custom-loc-input');
+                    const added = addLocationName(input.value);
+                    if (added) {
+                        selectedPlantLoc = added;
+                        input.value = '';
+                        syncLocationUIs();
+                    }
+                });
+
+                // 식물 등록/수정 제출
+                document.getElementById('form-plant').addEventListener('submit', e => {
+                    e.preventDefault();
+                    const editId = document.getElementById('plant-edit-id').value;
+                    const name = document.getElementById('plant-name').value.trim();
+                    const species = document.getElementById('plant-species').value.trim();
+                    const targetLeaves = Math.max(0, Number(document.getElementById('plant-leaves').value || 0));
+                    const interval = Math.max(1, Number(document.getElementById('plant-interval').value || 7));
+                    const adoptedDate = document.getElementById('plant-adopted').value;
+                    const lastWatered = document.getElementById('plant-last-watered').value || getTodayStr();
+                    const soilMix = document.getElementById('plant-soil-mix').value.trim();
+                    const specialNote = document.getElementById('plant-special-note').value.trim();
+
+                    if (!name) return;
+
+                    if (editId) {
+                        const p = plants.find(item => item.id === editId);
+                        if (p) {
+                            const oldStats = computePlantStats(p);
+                            const leafDelta = targetLeaves - oldStats.currentLeaves;
+                            p.baseLeaves = Math.max(0, p.baseLeaves + leafDelta);
+                            p.name = name;
+                            p.species = species;
+                            p.defaultInterval = interval;
+                            p.adoptedDate = adoptedDate;
+                            p.initialLastWatered = lastWatered;
+                            p.location = selectedPlantLoc;
+                            p.soilMix = soilMix;
+                            p.specialNote = specialNote;
+                            p.photo = draftPlantPhoto;
+                            showToast(`'${name}' 정보가 수정되었습니다.`);
+                        }
+                    } else {
+                        const newPlant = normalizePlant({
+                            id: generateId(),
+                            name,
+                            species,
+                            baseLeaves: targetLeaves,
+                            defaultInterval: interval,
+                            adoptedDate,
+                            initialLastWatered: lastWatered,
+                            location: selectedPlantLoc,
+                            soilMix,
+                            specialNote,
+                            photo: draftPlantPhoto,
+                            logs: lastWatered ? [{ id: generateId(), type: 'water', date: lastWatered, note: '첫 물주기 기록' }] : []
+                        });
+                        plants.unshift(newPlant);
+                        showToast(`🌱 '${name}' 식물이 등록되었습니다!`);
+                    }
+
+                    saveState(true);
+                    syncLocationUIs();
+                    renderPlantList();
+                    if (activeTab === 'calendar') renderCalendar();
+                    closeModal('modal-plant');
+                });
+
+                // 상태 기록 타입 선택
+                document.querySelectorAll('#log-type-grid .log-type-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        selectedLogType = btn.dataset.type;
+                        updateLogTypeUI();
+                    });
+                });
+
+                // 상태 기록 모달 내 장소 추가
+                document.getElementById('btn-add-loc-in-log').addEventListener('click', () => {
+                    const input = document.getElementById('log-move-new-loc-input');
+                    const added = addLocationName(input.value);
+                    if (added) {
+                        selectedMoveLoc = added;
+                        input.value = '';
+                        syncLocationUIs();
+                    }
+                });
+
+                // 상태 기록 제출
+                document.getElementById('form-log').addEventListener('submit', e => {
+                    e.preventDefault();
+                    const plantId = document.getElementById('log-plant-id').value;
+                    const p = plants.find(item => item.id === plantId);
+                    if (!p) return;
+
+                    const date = document.getElementById('log-date').value || getTodayStr();
+                    const note = document.getElementById('log-note').value.trim();
+
+                    const newLog = {
+                        id: generateId(),
+                        type: selectedLogType,
+                        date: date,
+                        note: note,
+                        photo: draftLogPhoto,
+                        fromLoc: '',
+                        toLoc: ''
+                    };
+
+                    if (selectedLogType === 'move') {
+                        newLog.fromLoc = p.location || '미지정';
+                        newLog.toLoc = selectedMoveLoc || '미지정';
+                        p.location = selectedMoveLoc || '';
+                    }
+
+                    p.logs.push(newLog);
+                    p.logs.sort((a, b) => a.date.localeCompare(b.date));
+
+                    saveState(true);
+                    syncLocationUIs();
+                    renderPlantList();
+                    if (activeTab === 'calendar') renderCalendar();
+                    closeModal('modal-log');
+
+                    const meta = LOG_TYPE_META[selectedLogType] || LOG_TYPE_META.note;
+                    showToast(`${meta.icon} '${p.name}'에 ${meta.label} 기록이 저장되었습니다!`);
+                });
+
+                // 위임 클릭 이벤트
+                document.addEventListener('click', e => {
+                    const closeTarget = e.target.closest('[data-close]');
+                    if (closeTarget) {
+                        closeModal(closeTarget.dataset.close);
+                        return;
+                    }
+
+                    if (e.target.classList.contains('modal-backdrop')) {
+                        e.target.classList.add('hidden');
+                        return;
+                    }
+
+                    const lbTarget = e.target.closest('[data-lightbox]');
+                    if (lbTarget) {
+                        openLightbox(lbTarget.dataset.lightbox);
+                        return;
+                    }
+
+                    const quickWaterBtn = e.target.closest('[data-quick-water]');
+                    if (quickWaterBtn) {
+                        const pid = quickWaterBtn.dataset.quickWater;
+                        const p = plants.find(item => item.id === pid);
+                        if (p) {
+                            const today = getTodayStr();
+                            p.logs.push({
+                                id: generateId(),
+                                type: 'water',
+                                date: today,
+                                note: '빠른 물주기 체크',
+                                photo: ''
+                            });
+                            p.logs.sort((a, b) => a.date.localeCompare(b.date));
+                            saveState(true);
+                            renderPlantList();
+                            if (activeTab === 'calendar') renderCalendar();
+                            showToast(`💧 '${p.name}' 오늘 물주기 완료!`);
+                        }
+                        return;
+                    }
+
+                    const openLogBtn = e.target.closest('[data-open-log]');
+                    if (openLogBtn) {
+                        openLogModal(openLogBtn.dataset.openLog);
+                        return;
+                    }
+
+                    const detailBtn = e.target.closest('[data-detail-id]');
+                    if (detailBtn) {
+                        openDetailModal(detailBtn.dataset.detailId);
+                        return;
+                    }
+
+                    const delLogBtn = e.target.closest('[data-del-log]');
+                    if (delLogBtn) {
+                        const logId = delLogBtn.dataset.delLog;
+                        const pid = delLogBtn.dataset.plantId;
+                        const p = plants.find(item => item.id === pid);
+                        if (!p) return;
+
+                        openConfirm(
+                            '기록 삭제 확인',
+                            '이 타임라인 기록을 삭제할까요?\n삭제 시 잎 수, 스마트 물주기 및 경과 일수가 자동으로 다시 계산됩니다.',
+                            () => {
+                                p.logs = p.logs.filter(l => l.id !== logId);
+                                saveState(true);
+                                renderPlantList();
+                                if (activeTab === 'calendar') renderCalendar();
+                                openDetailModal(pid);
+                                showToast('기록이 삭제되었습니다.');
+                            }
+                        );
+                    }
+                });
+
+                document.getElementById('btn-confirm-yes').addEventListener('click', () => {
+                    closeModal('modal-confirm');
+                    if (typeof confirmCallback === 'function') {
+                        const fn = confirmCallback;
+                        confirmCallback = null;
+                        fn();
+                    }
+                });
+
+                document.getElementById('btn-close-lightbox').addEventListener('click', () => {
+                    document.getElementById('lightbox').classList.add('hidden');
+                });
+                document.getElementById('lightbox').addEventListener('click', e => {
+                    if (e.target.id === 'lightbox') {
+                        document.getElementById('lightbox').classList.add('hidden');
+                    }
+                });
+
+                document.getElementById('btn-cal-prev').addEventListener('click', () => {
+                    calMonth--;
+                    if (calMonth < 0) { calMonth = 11; calYear--; }
+                    renderCalendar();
+                });
+                document.getElementById('btn-cal-next').addEventListener('click', () => {
+                    calMonth++;
+                    if (calMonth > 11) { calMonth = 0; calYear++; }
+                    renderCalendar();
+                });
+
+                setupPhotoHandlers(
+                    'input-plant-photo',
+                    'paste-plant-photo',
+                    'plant-photo-preview-wrap',
+                    'plant-photo-preview',
+                    'plant-photo-btn-label',
+                    'btn-remove-plant-photo',
+                    true
+                );
+                setupPhotoHandlers(
+                    'input-log-photo',
+                    'paste-log-photo',
+                    'log-photo-preview-wrap',
+                    'log-photo-preview',
+                    'log-photo-btn-label',
+                    'btn-remove-log-photo',
+                    false
+                );
+            }
+
+            // =========================================================
+            // 초기화 실행
+            // =========================================================
+            function init() {
+                const now = new Date();
+                const weekNames = ['일', '월', '화', '수', '목', '금', '토'];
+                document.getElementById('today-subtitle').textContent =
+                    `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 (${weekNames[now.getDay()]})`;
+
+                initTheme();
+                loadState();
+                document.getElementById('sort-select').value = currentSort;
+                bindEvents();
+                syncLocationUIs();
+                updateBackupUI();
+                renderPlantList();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./sw.js').catch(function() {});
+            });
+        }
+    </script>
+</body>
+</html>
