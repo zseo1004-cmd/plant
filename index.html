@@ -97,51 +97,70 @@
         .brand {
             display: flex;
             align-items: center;
-            gap: 9px;
+            gap: 8px;
             min-width: 0;
+            flex: 1;
+        }
+
+        .brand > div:last-child {
+            min-width: 0;
+            flex: 1;
         }
 
         .brand-logo {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 11px;
             background: linear-gradient(135deg, #2e7d32, #43a047);
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 19px;
+            font-size: 18px;
             flex-shrink: 0;
             box-shadow: 0 3px 10px rgba(46, 125, 50, 0.24);
         }
 
         .brand-title {
-            font-size: 17px;
+            font-size: 16.5px;
             font-weight: 800;
             color: var(--primary-dark);
-            letter-spacing: -0.3px;
+            letter-spacing: -0.4px;
             white-space: nowrap;
         }
 
         .brand-sub {
-            font-size: 11px;
+            font-size: 10.5px;
             color: var(--text-sub);
-            margin-top: 1px;
+            margin-top: 2px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
+            flex-wrap: nowrap;
+            min-width: 0;
+        }
+
+        #today-subtitle {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            letter-spacing: -0.3px;
         }
 
         .autosave-pill {
             display: inline-flex;
             align-items: center;
-            gap: 3px;
-            padding: 1px 6px;
+            gap: 2px;
+            padding: 1.5px 6px;
             border-radius: 999px;
             background: var(--primary-light);
             color: var(--primary-dark);
             font-size: 10px;
             font-weight: 800;
+            white-space: nowrap;
+            word-break: keep-all;
+            flex-shrink: 0;
+            line-height: 1.2;
         }
 
         .header-actions {
@@ -284,8 +303,8 @@
         /* 요약 대시보드 4칸 */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 7px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 6px;
             margin-bottom: 12px;
         }
 
@@ -293,22 +312,32 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: 10px 4px;
+            padding: 10px 2px;
             text-align: center;
             box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
         }
 
         .stat-label {
-            font-size: 10.5px;
+            font-size: clamp(9.5px, 2.6vw, 10.5px);
             font-weight: 700;
             color: var(--text-sub);
-            letter-spacing: -0.2px;
+            letter-spacing: -0.5px;
+            white-space: nowrap;
+            word-break: keep-all;
+            line-height: 1.25;
+            width: 100%;
         }
 
         .stat-val {
             font-size: 18px;
             font-weight: 900;
-            margin-top: 2px;
+            margin-top: 3px;
+            line-height: 1.15;
         }
 
         /* 상단 뷰 전환 탭 (목록 / 캘린더) */
@@ -1541,6 +1570,67 @@
             background: #1e293b;
             border-color: #334155;
         }
+
+        /* 상세 모달 내 타임라인 / 캘린더 탭 전환 UI */
+        .detail-view-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #f1f5f9;
+            padding: 3px;
+            border-radius: 11px;
+            border: 1px solid var(--border);
+        }
+
+        .detail-tab-btn {
+            padding: 8px 6px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 800;
+            color: var(--text-sub);
+            transition: all 0.15s ease;
+        }
+
+        .detail-tab-btn.active {
+            background: #ffffff;
+            color: var(--primary-dark);
+            box-shadow: 0 2px 5px rgba(15, 23, 42, 0.08);
+        }
+
+        .detail-cal-wrap {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px;
+            background: #ffffff;
+        }
+
+        .detail-cal-wrap .cal-cell {
+            min-height: 46px;
+            padding: 3px 2px;
+        }
+
+        .detail-cal-wrap .cal-day-num {
+            font-size: 11px;
+        }
+
+        .detail-cal-wrap .cal-dots {
+            font-size: 9.5px;
+            margin-top: 2px;
+        }
+
+        body.dark-mode .detail-view-tabs {
+            background: #0b1120;
+            border-color: #334155;
+        }
+
+        body.dark-mode .detail-tab-btn.active {
+            background: #1e293b;
+            color: #4ade80;
+        }
+
+        body.dark-mode .detail-cal-wrap {
+            background: #0f172a;
+            border-color: #334155;
+        }
     </style>
 </head>
 <body>
@@ -1592,11 +1682,11 @@
                 <div class="stat-val" id="stat-species" style="color:var(--primary);">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">물 줄 식물 (오늘)</div>
+                <div class="stat-label">오늘 물주기</div>
                 <div class="stat-val" id="stat-urgent" style="color:var(--red);">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">4일 이내 물 줄 식물</div>
+                <div class="stat-label">4일 이내 물주기</div>
                 <div class="stat-val" id="stat-due4" style="color:var(--blue);">0</div>
             </div>
         </section>
@@ -1935,6 +2025,13 @@
             let calYear = nowInit.getFullYear();
             let calMonth = nowInit.getMonth();
             let calSelectedDate = getTodayStr();
+
+            // 상세 모달 내 탭 & 개체별 캘린더 상태
+            let detailActiveTab = 'timeline';
+            let detailPlantId = null;
+            let detailCalYear = nowInit.getFullYear();
+            let detailCalMonth = nowInit.getMonth();
+            let detailCalSelectedDate = getTodayStr();
 
             // 임시 작성 상태
             let draftPlantPhoto = '';
@@ -2940,10 +3037,126 @@
                 noteInput.placeholder = placeholders[selectedLogType] || '상세 메모를 입력하세요';
             }
 
-            function openDetailModal(plantId) {
+            function renderPlantDetailCalendar(plant, stats) {
+                const titleEl = document.getElementById('detail-cal-month-title');
+                const gridEl = document.getElementById('detail-cal-grid');
+                const dayDetailEl = document.getElementById('detail-cal-day-detail');
+                if (!titleEl || !gridEl || !dayDetailEl) return;
+
+                titleEl.textContent = `${detailCalYear}년 ${detailCalMonth + 1}월`;
+                gridEl.innerHTML = '';
+
+                const firstDay = new Date(detailCalYear, detailCalMonth, 1).getDay();
+                const lastDate = new Date(detailCalYear, detailCalMonth + 1, 0).getDate();
+                const todayStr = getTodayStr();
+
+                const eventMap = {};
+                function pushEvent(dateStr, kind, logObj = null) {
+                    if (!dateStr) return;
+                    if (!eventMap[dateStr]) eventMap[dateStr] = [];
+                    eventMap[dateStr].push({ kind, logObj });
+                }
+
+                // 다음 물 예정일 표시
+                pushEvent(stats.nextWaterDate, 'scheduled', null);
+
+                // 이 개체의 모든 상태 기록 매핑
+                plant.logs.forEach(l => {
+                    pushEvent(l.date, l.type, l);
+                });
+
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.className = 'cal-cell other-month';
+                    gridEl.appendChild(emptyCell);
+                }
+
+                for (let day = 1; day <= lastDate; day++) {
+                    const dateStr = `${detailCalYear}-${String(detailCalMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const cell = document.createElement('div');
+                    cell.className = 'cal-cell';
+                    if (dateStr === todayStr) cell.classList.add('today');
+                    if (dateStr === detailCalSelectedDate) cell.classList.add('selected');
+
+                    const evs = eventMap[dateStr] || [];
+                    const iconSet = [];
+                    evs.forEach(ev => {
+                        let ic = '';
+                        if (ev.kind === 'scheduled') ic = '🔔';
+                        else ic = (LOG_TYPE_META[ev.kind] || LOG_TYPE_META.note).icon;
+                        if (ic && !iconSet.includes(ic)) iconSet.push(ic);
+                    });
+
+                    cell.innerHTML = `
+                        <span class="cal-day-num">${day}</span>
+                        <div class="cal-dots">${iconSet.slice(0, 4).join('')}</div>
+                    `;
+                    cell.addEventListener('click', () => {
+                        detailCalSelectedDate = dateStr;
+                        renderPlantDetailCalendar(plant, stats);
+                    });
+                    gridEl.appendChild(cell);
+                }
+
+                const dayEvents = eventMap[detailCalSelectedDate] || [];
+                let detailHtml = `<div style="font-size:13px; font-weight:800; margin-bottom:8px;">📅 ${formatDotDate(detailCalSelectedDate)} 기록 (${dayEvents.length}건)</div>`;
+
+                if (dayEvents.length === 0) {
+                    detailHtml += `<div style="font-size:12px; color:var(--text-sub); padding:6px 0;">이 날짜에 등록된 기록이 없습니다.</div>`;
+                } else {
+                    detailHtml += `<div class="timeline-list">`;
+                    dayEvents.forEach(ev => {
+                        if (ev.kind === 'scheduled') {
+                            detailHtml += `
+                                <div class="timeline-item" style="flex-direction:row; align-items:center; justify-content:space-between;">
+                                    <span class="meta-pill cycle">🔔 다음 물 줄 예정일</span>
+                                    <button type="button" class="tool-chip-btn green" data-quick-water="${plant.id}">💧 오늘 물주기</button>
+                                </div>
+                            `;
+                        } else if (ev.logObj) {
+                            const log = ev.logObj;
+                            const meta = LOG_TYPE_META[log.type] || LOG_TYPE_META.note;
+                            const dur = stats.logDurations[log.id];
+                            const durBadge = dur !== undefined ? `<span class="duration-pill">⏱ ${dur}일 소요</span>` : '';
+                            const moveText = log.type === 'move' && (log.fromLoc || log.toLoc)
+                                ? ` (${escapeHtml(log.fromLoc || '미지정')} → ${escapeHtml(log.toLoc || '미지정')})`
+                                : '';
+
+                            detailHtml += `
+                                <div class="timeline-item">
+                                    <div class="timeline-top">
+                                        <div class="timeline-badge">
+                                            <span>${meta.icon} ${meta.label}${moveText}</span>
+                                            ${durBadge}
+                                        </div>
+                                        <div class="timeline-date-del">
+                                            <button type="button" class="btn-del-log" data-del-log="${log.id}" data-plant-id="${plant.id}">삭제</button>
+                                        </div>
+                                    </div>
+                                    ${log.note ? `<div style="font-size:12.5px; color:var(--text-main);">${escapeHtml(log.note)}</div>` : ''}
+                                    ${log.photo ? `<img class="timeline-photo" src="${log.photo}" alt="기록 사진" data-lightbox="${log.photo}">` : ''}
+                                </div>
+                            `;
+                        }
+                    });
+                    detailHtml += `</div>`;
+                }
+
+                dayDetailEl.innerHTML = detailHtml;
+            }
+
+            function openDetailModal(plantId, keepCalState = false) {
                 const p = plants.find(item => item.id === plantId);
                 if (!p) return;
                 const stats = computePlantStats(p);
+
+                if (!keepCalState || detailPlantId !== plantId) {
+                    const now = new Date();
+                    detailPlantId = plantId;
+                    detailCalYear = now.getFullYear();
+                    detailCalMonth = now.getMonth();
+                    detailCalSelectedDate = getTodayStr();
+                }
 
                 document.getElementById('detail-title').textContent = p.name;
                 const body = document.getElementById('detail-body');
@@ -3050,11 +3263,62 @@
                         <button type="button" class="btn btn-outline" id="btn-detail-edit">✏️ 정보 수정</button>
                         <button type="button" class="btn btn-outline" id="btn-detail-delete" style="color:var(--red); border-color:#fecaca;">삭제</button>
                     </div>
-                    <div style="margin-top:4px;">
-                        <div style="font-size:13px; font-weight:800; margin-bottom:8px;">📜 성장 및 관리 타임라인 (${p.logs.length})</div>
+                    <div class="detail-view-tabs" style="margin-top:4px;">
+                        <button type="button" class="detail-tab-btn ${detailActiveTab === 'timeline' ? 'active' : ''}" data-detail-tab="timeline">📜 타임라인 (${p.logs.length})</button>
+                        <button type="button" class="detail-tab-btn ${detailActiveTab === 'calendar' ? 'active' : ''}" data-detail-tab="calendar">📅 개체 캘린더</button>
+                    </div>
+                    <div id="detail-panel-timeline" class="${detailActiveTab === 'timeline' ? '' : 'hidden'}">
                         <div class="timeline-list">${timelineHtml}</div>
                     </div>
+                    <div id="detail-panel-calendar" class="${detailActiveTab === 'calendar' ? '' : 'hidden'}">
+                        <div class="detail-cal-wrap">
+                            <div class="cal-header" style="margin-bottom:8px;">
+                                <button type="button" class="cal-nav-btn" id="btn-detail-cal-prev">◀</button>
+                                <div class="cal-month-title" id="detail-cal-month-title" style="font-size:14.5px;"></div>
+                                <button type="button" class="cal-nav-btn" id="btn-detail-cal-next">▶</button>
+                            </div>
+                            <div class="cal-weekdays">
+                                <div style="color:#ef4444;">일</div>
+                                <div>월</div>
+                                <div>화</div>
+                                <div>수</div>
+                                <div>목</div>
+                                <div>금</div>
+                                <div style="color:#3b82f6;">토</div>
+                            </div>
+                            <div class="cal-grid" id="detail-cal-grid"></div>
+                            <div class="cal-day-detail" id="detail-cal-day-detail"></div>
+                        </div>
+                    </div>
                 `;
+
+                body.querySelectorAll('[data-detail-tab]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        detailActiveTab = btn.dataset.detailTab;
+                        body.querySelectorAll('[data-detail-tab]').forEach(b => b.classList.toggle('active', b === btn));
+                        document.getElementById('detail-panel-timeline').classList.toggle('hidden', detailActiveTab !== 'timeline');
+                        document.getElementById('detail-panel-calendar').classList.toggle('hidden', detailActiveTab !== 'calendar');
+                        if (detailActiveTab === 'calendar') {
+                            renderPlantDetailCalendar(p, stats);
+                        }
+                    });
+                });
+
+                document.getElementById('btn-detail-cal-prev').addEventListener('click', () => {
+                    detailCalMonth--;
+                    if (detailCalMonth < 0) { detailCalMonth = 11; detailCalYear--; }
+                    renderPlantDetailCalendar(p, stats);
+                });
+
+                document.getElementById('btn-detail-cal-next').addEventListener('click', () => {
+                    detailCalMonth++;
+                    if (detailCalMonth > 11) { detailCalMonth = 0; detailCalYear++; }
+                    renderPlantDetailCalendar(p, stats);
+                });
+
+                if (detailActiveTab === 'calendar') {
+                    renderPlantDetailCalendar(p, stats);
+                }
 
                 document.getElementById('btn-detail-add-log').addEventListener('click', () => {
                     closeModal('modal-detail');
@@ -3517,6 +3781,9 @@
                             saveState(true);
                             renderPlantList();
                             if (activeTab === 'calendar') renderCalendar();
+                            if (!document.getElementById('modal-detail').classList.contains('hidden') && detailPlantId === pid) {
+                                openDetailModal(pid, true);
+                            }
                             showToast(`💧 '${p.name}' 오늘 물주기 완료!`);
                         }
                         return;
@@ -3549,7 +3816,7 @@
                                 saveState(true);
                                 renderPlantList();
                                 if (activeTab === 'calendar') renderCalendar();
-                                openDetailModal(pid);
+                                openDetailModal(pid, true);
                                 showToast('기록이 삭제되었습니다.');
                             }
                         );
@@ -3612,7 +3879,7 @@
                 const now = new Date();
                 const weekNames = ['일', '월', '화', '수', '목', '금', '토'];
                 document.getElementById('today-subtitle').textContent =
-                    `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 (${weekNames[now.getDay()]})`;
+                    `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}(${weekNames[now.getDay()]})`;
 
                 initTheme();
                 loadState();
