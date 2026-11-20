@@ -300,6 +300,12 @@
             border-color: #e9d5ff;
         }
 
+        .tool-chip-btn.blue {
+            background: var(--blue-bg);
+            color: var(--blue);
+            border-color: #bae6fd;
+        }
+
         /* 요약 대시보드 4칸 */
         .stats-grid {
             display: grid;
@@ -320,6 +326,7 @@
             align-items: center;
             justify-content: center;
             min-width: 0;
+            cursor: pointer;
         }
 
         .stat-label {
@@ -365,7 +372,7 @@
             box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
         }
 
-        /* 검색 및 장소/정렬 컨트롤 바 (모바일 글자 잘림 완벽 해결) */
+        /* 검색 및 장소/정렬 컨트롤 바 */
         .controls-box {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -428,7 +435,6 @@
             background: #fff;
         }
 
-        /* 모바일에서 전체 장소 / 물 예정일 순 글자 잘림 방지 2열/유연 레이아웃 */
         .select-row {
             display: flex;
             flex-wrap: wrap;
@@ -492,6 +498,12 @@
 
         .plant-card.soon {
             border-color: #fcd34d;
+        }
+
+        .plant-card.archived {
+            opacity: 0.78;
+            background: #f8fafc;
+            border-style: dashed;
         }
 
         .card-top {
@@ -567,6 +579,11 @@
             color: var(--primary-dark);
         }
 
+        .dday-archive {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
         .plant-species {
             font-size: 12px;
             color: var(--text-sub);
@@ -635,6 +652,11 @@
             background: #fefce8;
             color: #713f12;
             border: 1px solid #fef08a;
+        }
+
+        .meta-pill.archive-tag {
+            background: #fee2e2;
+            color: #b91c1c;
         }
 
         /* 상세 정보 내 흙배합 & 특이사항 메모 카드 */
@@ -973,7 +995,7 @@
             font-size: 13px;
         }
 
-        /* 직접 터치 오버레이 사진 첨부 박스 */
+        /* 사진 첨부 박스 */
         .photo-upload-box {
             border: 1.5px dashed #cbd5e1;
             border-radius: 13px;
@@ -1092,7 +1114,6 @@
             color: var(--primary-dark);
         }
 
-        /* 상세 모달 통계 그리드 */
         .detail-stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -1194,7 +1215,6 @@
             border: 1px solid var(--border);
         }
 
-        /* 장소 관리 리스트 */
         .manage-loc-item {
             display: flex;
             align-items: center;
@@ -1207,7 +1227,6 @@
             font-weight: 700;
         }
 
-        /* 라이트박스 */
         .lightbox-backdrop {
             position: fixed;
             inset: 0;
@@ -1237,7 +1256,6 @@
             font-size: 13px;
         }
 
-        /* 토스트 알림 */
         .toast {
             position: fixed;
             bottom: 22px;
@@ -1263,9 +1281,7 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* =========================================================
-           다크 모드 (Dark Mode) 테마 스타일
-           ========================================================= */
+        /* 다크 모드 스타일 */
         body.dark-mode {
             --primary: #4ade80;
             --primary-dark: #22c55e;
@@ -1352,6 +1368,12 @@
             border-color: #581c87;
         }
 
+        body.dark-mode .tool-chip-btn.blue {
+            background: #0c2d48;
+            color: #38bdf8;
+            border-color: #0369a1;
+        }
+
         body.dark-mode .view-tabs {
             background: #0b1120;
             border: 1px solid #1e293b;
@@ -1405,6 +1427,11 @@
 
         body.dark-mode .plant-card.soon {
             border-color: #92400e;
+        }
+
+        body.dark-mode .plant-card.archived {
+            background: #0f172a;
+            border-color: #334155;
         }
 
         body.dark-mode .meta-pill {
@@ -1571,7 +1598,6 @@
             border-color: #334155;
         }
 
-        /* 상세 모달 내 타임라인 / 캘린더 탭 전환 UI */
         .detail-view-tabs {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1631,6 +1657,11 @@
             background: #0f172a;
             border-color: #334155;
         }
+
+        body.dark-mode .archive-check-box {
+            background: #0f172a !important;
+            border-color: #334155 !important;
+        }
     </style>
 </head>
 <body>
@@ -1648,45 +1679,46 @@
                 </div>
             </div>
             <div class="header-actions">
-                <button type="button" class="theme-toggle-btn" id="btn-theme-toggle" title="일반모드 / 다크모드 전환" aria-label="테마 전환">🌙</button>
+                <button type="button" class="theme-toggle-btn" id="btn-theme-toggle" title="테마 전환" aria-label="테마 전환">🌙</button>
                 <button type="button" class="btn btn-primary" id="btn-open-add">＋ 새 식물 등록</button>
             </div>
         </div>
     </header>
 
     <main class="container">
-        <!-- 폰 파일 백업 / 복원 / 엑셀 / 장소 관리 툴바 -->
+        <!-- 툴바: 백업, 복원, 캘린더 알람 내보내기, 엑셀, 장소 관리 -->
         <div class="quick-tools-bar" id="backup-banner">
             <div class="backup-hint" id="backup-banner-text">
                 📱 기기 자동 저장 중 · 주기적으로 <strong>백업 (JSON)</strong>을 저장하세요.
             </div>
             <div class="quick-tools-btns">
                 <div class="tool-chip-btn">
-                    <span>📥 불러오기 (JSON)</span>
+                    <span>📥 불러오기</span>
                     <input type="file" id="input-quick-import-json" accept=".json,application/json" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;">
                 </div>
-                <button type="button" class="tool-chip-btn green" id="btn-quick-export-json">📤 백업 (JSON)</button>
-                <button type="button" class="tool-chip-btn" id="btn-quick-export-csv">📊 엑셀(CSV)</button>
-                <button type="button" class="tool-chip-btn purple" id="btn-open-loc-manage">⚙️ 장소 관리</button>
+                <button type="button" class="tool-chip-btn green" id="btn-quick-export-json">📤 백업</button>
+                <button type="button" class="tool-chip-btn blue" id="btn-export-ics" title="스마트폰 캘린더에 물주기 알람 등록">📅 캘린더 알람 (.ics)</button>
+                <button type="button" class="tool-chip-btn" id="btn-quick-export-csv">📊 엑셀</button>
+                <button type="button" class="tool-chip-btn purple" id="btn-open-loc-manage">⚙️ 장소</button>
             </div>
         </div>
 
         <!-- 요약 대시보드 4칸 -->
         <section class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">전체 개체 수</div>
+            <div class="stat-card" data-stat-click="all">
+                <div class="stat-label">전체 활성 개체</div>
                 <div class="stat-val" id="stat-total" style="color:var(--text-main);">0</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" data-stat-click="species">
                 <div class="stat-label">보유 품종 수</div>
                 <div class="stat-val" id="stat-species" style="color:var(--primary);">0</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" data-stat-click="urgent">
                 <div class="stat-label">오늘 물주기</div>
                 <div class="stat-val" id="stat-urgent" style="color:var(--red);">0</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">4일 이내 물주기</div>
+            <div class="stat-card" id="stat-card-due4" data-stat-click="due4" title="오늘부터 4일 이내에 물 줄 식물">
+                <div class="stat-label">💧 4일 이내 물줄 식물</div>
                 <div class="stat-val" id="stat-due4" style="color:var(--blue);">0</div>
             </div>
         </section>
@@ -1700,20 +1732,18 @@
         <!-- 탭 1: 식물 목록 뷰 -->
         <section id="view-list">
             <div class="controls-box">
-                <!-- 상태 필터 탭 (4일 이내 물 줄 식물 탭 적용) -->
                 <div class="filter-chips" id="status-filter-chips">
                     <button type="button" class="filter-chip active" data-filter="all" id="chip-all">전체 보기 (0)</button>
                     <button type="button" class="filter-chip" data-filter="urgent" id="chip-urgent">🚨 오늘 물 줄 식물 (0)</button>
                     <button type="button" class="filter-chip" data-filter="due4" id="chip-due4">💧 4일 이내 물 줄 식물 (0)</button>
                     <button type="button" class="filter-chip" data-filter="recent_care" id="chip-recent">🌱 최근 성장/분갈이 (0)</button>
+                    <button type="button" class="filter-chip" data-filter="archived" id="chip-archive-filter">📦 보관함 식물 (0)</button>
                 </div>
 
-                <!-- 검색 입력 -->
                 <div class="search-row">
                     <input type="text" class="search-input" id="search-input" placeholder="🔍 식물 이름, 품종, 장소, 메모 검색...">
                 </div>
 
-                <!-- 모바일 글자 잘림 방지: 전체 장소 & 물 예정일 순 2열 유연 드롭다운 -->
                 <div class="select-row">
                     <div class="select-wrapper">
                         <select class="control-select" id="location-filter-select" aria-label="장소별 필터">
@@ -1758,9 +1788,7 @@
         </section>
     </main>
 
-    <!-- ========================================================= -->
     <!-- 모달 1: 식물 추가 / 수정 -->
-    <!-- ========================================================= -->
     <div id="modal-plant" class="modal-backdrop hidden">
         <div class="modal-panel">
             <div class="modal-header">
@@ -1823,6 +1851,15 @@
                     <textarea class="form-textarea" id="plant-special-note" rows="2" style="height:auto; min-height:66px; padding:10px 12px; resize:vertical;" placeholder="예: 순화 중, 과습 주의, 무늬 발현 관찰, 뿌리 파리 방제 필요 등"></textarea>
                 </div>
 
+                <!-- 보관 상태 토글 체크박스 -->
+                <div class="form-group archive-check-box" style="background:#f8fafc; padding:10px 12px; border-radius:11px; border:1px solid var(--border);">
+                    <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:800; cursor:pointer;">
+                        <input type="checkbox" id="plant-is-archived" style="width:18px; height:18px; accent-color:var(--primary);">
+                        <span>📦 보관함으로 이동 (별이 됨 / 분양 보냄 · 물주기 알림 끄기)</span>
+                    </label>
+                    <div style="font-size:11px; color:var(--text-sub); margin-top:2px; margin-left:26px;">체크하면 알람과 대시보드에서 제외되지만 기록과 사진은 안전하게 보존됩니다.</div>
+                </div>
+
                 <div class="form-group">
                     <label class="form-label">대표 사진 (선택)</label>
                     <div class="photo-upload-box">
@@ -1845,9 +1882,7 @@
         </div>
     </div>
 
-    <!-- ========================================================= -->
     <!-- 모달 2: 상태 & 성장 기록 추가 -->
-    <!-- ========================================================= -->
     <div id="modal-log" class="modal-backdrop hidden">
         <div class="modal-panel">
             <div class="modal-header">
@@ -1870,11 +1905,11 @@
                         <button type="button" class="log-type-btn" data-type="repot">🪴 분갈이</button>
                         <button type="button" class="log-type-btn" data-type="topdress">⛰️ 복토</button>
                         <button type="button" class="log-type-btn" data-type="fertilizer">🧪 영양제</button>
+                        <button type="button" class="log-type-btn" data-type="pest">🐛 병충해</button>
                         <button type="button" class="log-type-btn" data-type="note">📝 일반 메모</button>
                     </div>
                 </div>
 
-                <!-- 장소 이동 선택 시 표시 -->
                 <div class="form-group hidden" id="log-move-loc-group">
                     <label class="form-label">이동할 새 장소 선택 *</label>
                     <div class="location-chips-wrap" id="log-move-loc-chips"></div>
@@ -1916,9 +1951,7 @@
         </div>
     </div>
 
-    <!-- ========================================================= -->
     <!-- 모달 3: 식물 상세 정보 & 타임라인 -->
-    <!-- ========================================================= -->
     <div id="modal-detail" class="modal-backdrop hidden">
         <div class="modal-panel">
             <div class="modal-header">
@@ -1929,9 +1962,7 @@
         </div>
     </div>
 
-    <!-- ========================================================= -->
-    <!-- 모달 4: 장소(위치) 생성 및 삭제 관리 -->
-    <!-- ========================================================= -->
+    <!-- 모달 4: 장소 관리 -->
     <div id="modal-locations" class="modal-backdrop hidden">
         <div class="modal-panel" style="max-width:420px;">
             <div class="modal-header">
@@ -1959,9 +1990,7 @@
         </div>
     </div>
 
-    <!-- ========================================================= -->
-    <!-- 모달 5: 확인 대화상자 (alert / confirm 대체) -->
-    <!-- ========================================================= -->
+    <!-- 모달 5: 확인 대화상자 -->
     <div id="modal-confirm" class="modal-backdrop hidden" style="z-index:150;">
         <div class="modal-panel" style="max-width:360px;">
             <div class="modal-header">
@@ -1978,13 +2007,11 @@
         </div>
     </div>
 
-    <!-- 사진 전체 화면 라이트박스 -->
     <div id="lightbox" class="lightbox-backdrop hidden">
         <img id="lightbox-img" src="" alt="확대 사진">
         <button type="button" class="lightbox-close" id="btn-close-lightbox">닫기 ✕</button>
     </div>
 
-    <!-- 토스트 알림 -->
     <div id="toast" class="toast"></div>
 
     <script>
@@ -2006,11 +2033,11 @@
                 repot: { icon: '🪴', label: '분갈이' },
                 topdress: { icon: '⛰️', label: '복토' },
                 fertilizer: { icon: '🧪', label: '영양제' },
+                pest: { icon: '🐛', label: '병충해' },
                 note: { icon: '📝', label: '일반 메모' },
                 care: { icon: '📝', label: '일반 메모' }
             };
 
-            // 앱 상태
             let plants = [];
             let customLocations = DEFAULT_LOCATIONS.slice();
             let currentSort = 'water_asc';
@@ -2020,20 +2047,17 @@
             let lastBackupAt = '';
             let dirtySinceBackup = false;
 
-            // 캘린더 상태
             const nowInit = new Date();
             let calYear = nowInit.getFullYear();
             let calMonth = nowInit.getMonth();
             let calSelectedDate = getTodayStr();
 
-            // 상세 모달 내 탭 & 개체별 캘린더 상태
             let detailActiveTab = 'timeline';
             let detailPlantId = null;
             let detailCalYear = nowInit.getFullYear();
             let detailCalMonth = nowInit.getMonth();
             let detailCalSelectedDate = getTodayStr();
 
-            // 임시 작성 상태
             let draftPlantPhoto = '';
             let draftLogPhoto = '';
             let selectedPlantLoc = '';
@@ -2042,10 +2066,6 @@
             let confirmCallback = null;
             let toastTimer = null;
 
-
-            // =========================================================
-            // 일반모드 / 다크모드 테마 관리
-            // =========================================================
             const THEME_STORAGE_KEY = 'plant_butler_theme_v1';
 
             function applyTheme(theme) {
@@ -2084,9 +2104,6 @@
                 showToast(nextTheme === 'dark' ? '🌙 다크모드로 전환되었습니다.' : '☀️ 일반모드로 전환되었습니다.');
             }
 
-            // =========================================================
-            // 날짜 유틸리티
-            // =========================================================
             function getTodayStr() {
                 const d = new Date();
                 const y = d.getFullYear();
@@ -2136,23 +2153,60 @@
                     .replace(/"/g, '&quot;');
             }
 
-            // =========================================================
-            // 토스트 & 확인 모달 & 라이트박스
-            // =========================================================
             function showToast(msg) {
                 const el = document.getElementById('toast');
                 el.textContent = msg;
                 el.classList.add('show');
                 clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+                toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+            }
+
+            const overlayStack = [];
+            let ignoreNextPopState = false;
+
+            function pushOverlayHistory(overlayId) {
+                const idx = overlayStack.indexOf(overlayId);
+                if (idx !== -1) return;
+                overlayStack.push(overlayId);
+                try {
+                    window.history.pushState({ plantOverlay: overlayId, depth: overlayStack.length }, '');
+                } catch (e) {}
+            }
+
+            function popOverlayHistory(overlayId) {
+                const idx = overlayStack.lastIndexOf(overlayId);
+                if (idx !== -1) {
+                    overlayStack.splice(idx, 1);
+                    try {
+                        if (window.history.state && window.history.state.plantOverlay) {
+                            ignoreNextPopState = true;
+                            window.history.back();
+                        }
+                    } catch (e) {}
+                }
             }
 
             function openModal(id) {
-                document.getElementById(id).classList.remove('hidden');
+                const el = document.getElementById(id);
+                if (!el) return;
+                const wasHidden = el.classList.contains('hidden');
+                el.classList.remove('hidden');
+                if (wasHidden) {
+                    pushOverlayHistory(id);
+                }
             }
 
-            function closeModal(id) {
-                document.getElementById(id).classList.add('hidden');
+            function closeModal(id, fromPopState = false) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const wasOpen = !el.classList.contains('hidden');
+                el.classList.add('hidden');
+                if (id === 'modal-detail') {
+                    detailPlantId = null;
+                }
+                if (wasOpen && !fromPopState) {
+                    popOverlayHistory(id);
+                }
             }
 
             function openConfirm(title, message, onConfirm, confirmBtnText = '삭제') {
@@ -2166,13 +2220,39 @@
 
             function openLightbox(src) {
                 if (!src) return;
+                const lb = document.getElementById('lightbox');
+                const wasHidden = lb.classList.contains('hidden');
                 document.getElementById('lightbox-img').src = src;
-                document.getElementById('lightbox').classList.remove('hidden');
+                lb.classList.remove('hidden');
+                if (wasHidden) {
+                    pushOverlayHistory('lightbox');
+                }
             }
 
-            // =========================================================
-            // 이미지 압축 (최대 800px, JPEG 품질 0.75)
-            // =========================================================
+            function closeLightbox(fromPopState = false) {
+                const lb = document.getElementById('lightbox');
+                const wasOpen = !lb.classList.contains('hidden');
+                lb.classList.add('hidden');
+                if (wasOpen && !fromPopState) {
+                    popOverlayHistory('lightbox');
+                }
+            }
+
+            window.addEventListener('popstate', () => {
+                if (ignoreNextPopState) {
+                    ignoreNextPopState = false;
+                    return;
+                }
+                if (overlayStack.length > 0) {
+                    const topId = overlayStack.pop();
+                    if (topId === 'lightbox') {
+                        closeLightbox(true);
+                    } else {
+                        closeModal(topId, true);
+                    }
+                }
+            });
+
             function compressImageBlob(blobOrFile) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
@@ -2208,9 +2288,6 @@
                 });
             }
 
-            // =========================================================
-            // 데이터 정규화 및 하위 호환 마이그레이션
-            // =========================================================
             function normalizeLogType(rawType) {
                 if (!rawType) return 'note';
                 if (rawType === 'care') return 'note';
@@ -2242,6 +2319,7 @@
                     location: String(raw.location || '').trim(),
                     soilMix: String(raw.soilMix || '').trim(),
                     specialNote: String(raw.specialNote || '').trim(),
+                    isArchived: Boolean(raw.isArchived),
                     photo: raw.photo || '',
                     logs: logs
                 };
@@ -2269,6 +2347,7 @@
                         location: '거실 창가',
                         soilMix: '상토 3 : 바크 3 : 펄라이트 2 : 산야초 2',
                         specialNote: '공중뿌리 수태봉 유도 중 · 직사광선 피하고 밝은 간접광 유지',
+                        isArchived: false,
                         logs: [
                             { id: 'l0', type: 'repot', date: d26, note: '배수 좋은 흙으로 분갈이 완료' },
                             { id: 'w1', type: 'water', date: d26, note: '분갈이 후 첫 관수' },
@@ -2289,6 +2368,7 @@
                         adoptedDate: addDaysStr(today, -65),
                         initialLastWatered: d2,
                         location: '방 책상',
+                        isArchived: false,
                         logs: [
                             { id: 'l5', type: 'water', date: d2, note: '저면관수' }
                         ]
@@ -2301,7 +2381,7 @@
                     dirtySinceBackup = true;
                 }
                 const payload = {
-                    version: 4,
+                    version: 5,
                     updatedAt: new Date().toISOString(),
                     lastBackupAt: lastBackupAt,
                     dirtySinceBackup: dirtySinceBackup,
@@ -2323,10 +2403,7 @@
                     if (!rawStr) {
                         for (const legacyKey of LEGACY_KEYS) {
                             const legacyStr = localStorage.getItem(legacyKey);
-                            if (legacyStr) {
-                                rawStr = legacyStr;
-                                break;
-                            }
+                            if (legacyStr) { rawStr = legacyStr; break; }
                         }
                     }
 
@@ -2372,31 +2449,22 @@
                     quickSaveBtn.classList.add('warn-btn');
                     bannerText.innerHTML = lastBackupAt
                         ? `⚠️ 마지막 백업(${lastBackupAt}) 이후 <strong>새 기록</strong>이 있습니다.`
-                        : `⚠️ 아직 파일로 백업하지 않았습니다. <strong>백업 (JSON)</strong>을 눌러 보관하세요.`;
+                        : `⚠️ 아직 파일로 백업하지 않았습니다. <strong>백업</strong>을 눌러 보관하세요.`;
                 } else {
                     banner.classList.remove('warn');
                     quickSaveBtn.classList.remove('warn-btn');
                     bannerText.innerHTML = lastBackupAt
-                        ? `✅ 최신 백업 완료 (${lastBackupAt}) · 기기에도 자동 저장 중`
-                        : `📱 기기 자동 저장 중 · 언제든 <strong>백업 (JSON)</strong>으로 파일 보관 가능`;
+                        ? `✅ 최신 백업 완료 (${lastBackupAt}) · 기기 자동 저장 중`
+                        : `📱 기기 자동 저장 중 · 언제든 <strong>백업</strong>으로 파일 보관 가능`;
                 }
             }
 
-            // =========================================================
-            // 스마트 물주기 계산 (최근 4회 물주기 기준 평균 + 이상치 중앙값 보정)
-            // =========================================================
             function calculateSmartWaterCycle(uniqueWaterDates, defaultInterval) {
                 const fallback = Math.max(1, Number(defaultInterval || 7));
                 if (!Array.isArray(uniqueWaterDates) || uniqueWaterDates.length < 2) {
-                    return {
-                        interval: fallback,
-                        method: '기본 설정 주기',
-                        shortLabel: `평균 ${fallback}일`,
-                        isMedian: false
-                    };
+                    return { interval: fallback, method: '기본 설정 주기', shortLabel: `평균 ${fallback}일`, isMedian: false };
                 }
 
-                // 가장 최근 최대 4회 물 준 날짜 추출 -> 최대 3개의 물주기 간격 생성
                 const recentDates = uniqueWaterDates.slice(-4);
                 const intervals = [];
                 for (let i = 1; i < recentDates.length; i++) {
@@ -2405,77 +2473,42 @@
                 }
 
                 if (intervals.length === 0) {
-                    return {
-                        interval: fallback,
-                        method: '기본 설정 주기',
-                        shortLabel: `평균 ${fallback}일`,
-                        isMedian: false
-                    };
+                    return { interval: fallback, method: '기본 설정 주기', shortLabel: `평균 ${fallback}일`, isMedian: false };
                 }
-
                 if (intervals.length === 1) {
                     const val = Math.max(1, Math.round(intervals[0]));
-                    return {
-                        interval: val,
-                        method: '최근 기록 기준',
-                        shortLabel: `평균 ${val}일`,
-                        isMedian: false
-                    };
+                    return { interval: val, method: '최근 기록 기준', shortLabel: `평균 ${val}일`, isMedian: false };
                 }
 
-                // 2개 또는 3개 간격이 있을 때 평균과 중앙값 계산 및 이상치 판별
                 const sum = intervals.reduce((a, b) => a + b, 0);
                 const mean = sum / intervals.length;
-
                 const sorted = [...intervals].sort((a, b) => a - b);
                 const mid = Math.floor(sorted.length / 2);
-                const medianRaw = sorted.length % 2 !== 0
-                    ? sorted[mid]
-                    : (sorted[mid - 1] + sorted[mid]) / 2;
-
+                const medianRaw = sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
                 const minVal = sorted[0];
                 const maxVal = sorted[sorted.length - 1];
 
-                // 이상치 판별: 평균 대비 40% 초과 편차 또는 3일 초과 차이, 또는 최대/최소 비율 1.8배 이상
-                const hasOutlier = intervals.some(v =>
-                    Math.abs(v - mean) > mean * 0.4 || Math.abs(v - mean) > 3
-                ) || (minVal > 0 && maxVal / minVal >= 1.8);
+                const hasOutlier = intervals.some(v => Math.abs(v - mean) > mean * 0.4 || Math.abs(v - mean) > 3) || (minVal > 0 && maxVal / minVal >= 1.8);
 
                 if (hasOutlier) {
                     const medVal = Math.max(1, Math.round(medianRaw));
-                    return {
-                        interval: medVal,
-                        method: `최근 ${recentDates.length}회 중앙값 보정`,
-                        shortLabel: `중앙값 ${medVal}일`,
-                        isMedian: true
-                    };
+                    return { interval: medVal, method: `최근 ${recentDates.length}회 중앙값 보정`, shortLabel: `중앙값 ${medVal}일`, isMedian: true };
                 }
 
                 const avgVal = Math.max(1, Math.round(mean));
-                return {
-                    interval: avgVal,
-                    method: `최근 ${recentDates.length}회 평균`,
-                    shortLabel: `평균 ${avgVal}일`,
-                    isMedian: false
-                };
+                return { interval: avgVal, method: `최근 ${recentDates.length}회 평균`, shortLabel: `평균 ${avgVal}일`, isMedian: false };
             }
 
-            // =========================================================
-            // 식물별 핵심 지표 계산
-            // =========================================================
             function computePlantStats(plant) {
                 const today = getTodayStr();
                 const sortedLogs = [...plant.logs].sort((a, b) => a.date.localeCompare(b.date));
 
-                // 1) 현재 총 잎 수: 'new_leaf'(신엽 펴짐)만 +1, 'drop_leaf'(하엽 짐)만 -1
-                // 'sprout'(새순 돋음)는 잎 수 변동 없음 (+0)
                 let currentLeaves = Number(plant.baseLeaves || 0);
                 sortedLogs.forEach(log => {
                     if (log.type === 'new_leaf') currentLeaves += 1;
                     else if (log.type === 'drop_leaf') currentLeaves = Math.max(0, currentLeaves - 1);
                 });
 
-                // 2) 스마트 물주기 계산 (최근 4회 기준 + 이상치 중앙값 보정)
                 const waterDates = sortedLogs.filter(l => l.type === 'water').map(l => l.date);
                 const uniqueWaterDates = Array.from(new Set(waterDates)).sort();
                 const smartWater = calculateSmartWaterCycle(uniqueWaterDates, plant.defaultInterval);
@@ -2491,7 +2524,6 @@
                 if (daysUntilWater <= 0) waterStatus = 'urgent';
                 else if (daysUntilWater <= 4) waterStatus = 'soon';
 
-                // 3) 신엽 개엽 & 하엽 진행 소요 주기 계산
                 let pendingNewStart = null;
                 const newLeafDurations = [];
                 let pendingDropStart = null;
@@ -2520,37 +2552,27 @@
                     }
                 });
 
-                const avgNewLeafDays = newLeafDurations.length > 0
-                    ? Math.round(newLeafDurations.reduce((a, b) => a + b, 0) / newLeafDurations.length)
-                    : null;
+                const avgNewLeafDays = newLeafDurations.length > 0 ? Math.round(newLeafDurations.reduce((a, b) => a + b, 0) / newLeafDurations.length) : null;
+                const avgDropLeafDays = dropLeafDurations.length > 0 ? Math.round(dropLeafDurations.reduce((a, b) => a + b, 0) / dropLeafDurations.length) : null;
 
-                const avgDropLeafDays = dropLeafDurations.length > 0
-                    ? Math.round(dropLeafDurations.reduce((a, b) => a + b, 0) / dropLeafDurations.length)
-                    : null;
-
-                // 4) 분갈이 후 경과 일수 계산
                 const repotLogs = sortedLogs.filter(l => l.type === 'repot');
                 const lastRepotDate = repotLogs.length > 0 ? repotLogs[repotLogs.length - 1].date : null;
                 const daysSinceRepot = lastRepotDate ? Math.max(0, diffDays(lastRepotDate, today)) : null;
 
-                // 4-2) 복토 후 경과 일수 계산
                 const topdressLogs = sortedLogs.filter(l => l.type === 'topdress');
                 const lastTopdressDate = topdressLogs.length > 0 ? topdressLogs[topdressLogs.length - 1].date : null;
                 const daysSinceTopdress = lastTopdressDate ? Math.max(0, diffDays(lastTopdressDate, today)) : null;
 
-                // 5) 비료(영양제) 후 경과 일수 계산
                 const fertLogs = sortedLogs.filter(l => l.type === 'fertilizer');
                 const lastFertDate = fertLogs.length > 0 ? fertLogs[fertLogs.length - 1].date : null;
                 const daysSinceFertilizer = lastFertDate ? Math.max(0, diffDays(lastFertDate, today)) : null;
 
-                // 6) 최근 14일 이내 성장/분갈이 이력 여부
                 const hasRecentCare = sortedLogs.some(l => {
                     if (l.type === 'water') return false;
                     const age = diffDays(l.date, today);
                     return age >= 0 && age <= 14;
                 });
 
-                // 7) 입양일 D+일수
                 const adoptedDays = plant.adoptedDate ? Math.max(0, diffDays(plant.adoptedDate, today)) : null;
 
                 return {
@@ -2577,21 +2599,18 @@
                 };
             }
 
-            // =========================================================
-            // 장소 UI 동기화
-            // =========================================================
             function syncLocationUIs() {
                 const filterSelect = document.getElementById('location-filter-select');
                 const prevVal = filterSelect.value || activeLocationFilter;
                 filterSelect.innerHTML = `<option value="all">📍 전체 장소</option>`;
                 customLocations.forEach(loc => {
-                    const cnt = plants.filter(p => (p.location || '') === loc).length;
+                    const cnt = plants.filter(p => !p.isArchived && (p.location || '') === loc).length;
                     const opt = document.createElement('option');
                     opt.value = loc;
                     opt.textContent = `📍 ${loc} (${cnt})`;
                     filterSelect.appendChild(opt);
                 });
-                const unassignedCnt = plants.filter(p => !p.location).length;
+                const unassignedCnt = plants.filter(p => !p.isArchived && !p.location).length;
                 if (unassignedCnt > 0) {
                     const opt = document.createElement('option');
                     opt.value = '__unassigned__';
@@ -2663,49 +2682,51 @@
                 });
             }
 
-            // =========================================================
-            // 식물 목록 렌더링
-            // =========================================================
             function renderPlantList() {
                 const searchVal = document.getElementById('search-input').value.trim().toLowerCase();
                 let urgentCount = 0;
                 let due4Count = 0;
                 let recentCareCount = 0;
-                const speciesSet = new Set();
+                let archiveCount = 0;
+                const activeSpeciesSet = new Set();
 
                 const enriched = plants.map(p => {
                     const stats = computePlantStats(p);
-                    if (stats.daysUntilWater <= 0) urgentCount++;
-                    if (stats.daysUntilWater <= 4) due4Count++;
-                    if (stats.hasRecentCare) recentCareCount++;
-
-                    // 품종명 집계: 입력된 품종명이 있으면 품종명 기준, 없으면 식물 이름 기준으로 중복 제거
-                    const cultivarKey = (p.species || p.name || '').trim().toLowerCase().replace(/\s+/g, ' ');
-                    if (cultivarKey) speciesSet.add(cultivarKey);
-
+                    if (!p.isArchived) {
+                        if (stats.daysUntilWater <= 0) urgentCount++;
+                        if (stats.daysUntilWater <= 4) due4Count++;
+                        if (stats.hasRecentCare) recentCareCount++;
+                        const activeKey = (p.species || p.name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                        if (activeKey) activeSpeciesSet.add(activeKey);
+                    } else {
+                        archiveCount++;
+                    }
                     return { plant: p, stats };
                 });
 
-                // 상단 대시보드 4칸 업데이트
-                document.getElementById('stat-total').textContent = plants.length;
-                document.getElementById('stat-species').textContent = speciesSet.size;
+                document.getElementById('stat-total').textContent = plants.filter(p => !p.isArchived).length;
+                document.getElementById('stat-species').textContent = activeSpeciesSet.size;
                 document.getElementById('stat-urgent').textContent = urgentCount;
                 document.getElementById('stat-due4').textContent = due4Count;
 
-                // 필터 칩 카운트 업데이트
-                document.getElementById('chip-all').textContent = `전체 보기 (${plants.length})`;
+                document.getElementById('chip-all').textContent = `전체 보기 (${plants.filter(p => !p.isArchived).length})`;
                 document.getElementById('chip-urgent').textContent = `🚨 오늘 물 줄 식물 (${urgentCount})`;
                 document.getElementById('chip-due4').textContent = `💧 4일 이내 물 줄 식물 (${due4Count})`;
                 document.getElementById('chip-recent').textContent = `🌱 최근 성장/분갈이 (${recentCareCount})`;
+                document.getElementById('chip-archive-filter').textContent = `📦 보관함 식물 (${archiveCount})`;
 
-                // 필터링
                 let filtered = enriched.filter(({ plant, stats }) => {
-                    if (activeStatusFilter === 'urgent' && stats.daysUntilWater > 0) return false;
-                    if (activeStatusFilter === 'due4' && stats.daysUntilWater > 4) return false;
-                    if (activeStatusFilter === 'recent_care' && !stats.hasRecentCare) return false;
+                    if (activeStatusFilter === 'archived') {
+                        if (!plant.isArchived) return false;
+                    } else {
+                        if (plant.isArchived) return false;
+                        if (activeStatusFilter === 'urgent' && stats.daysUntilWater > 0) return false;
+                        if (activeStatusFilter === 'due4' && stats.daysUntilWater > 4) return false;
+                        if (activeStatusFilter === 'recent_care' && !stats.hasRecentCare) return false;
 
-                    if (activeLocationFilter === '__unassigned__' && plant.location) return false;
-                    if (activeLocationFilter !== 'all' && activeLocationFilter !== '__unassigned__' && plant.location !== activeLocationFilter) return false;
+                        if (activeLocationFilter === '__unassigned__' && plant.location) return false;
+                        if (activeLocationFilter !== 'all' && activeLocationFilter !== '__unassigned__' && plant.location !== activeLocationFilter) return false;
+                    }
 
                     if (searchVal) {
                         const hay = [
@@ -2721,29 +2742,12 @@
                     return true;
                 });
 
-                // 정렬
                 filtered.sort((a, b) => {
-                    if (currentSort === 'water_asc') {
-                        return a.stats.daysUntilWater - b.stats.daysUntilWater;
-                    }
-                    if (currentSort === 'adopt_asc') {
-                        const da = a.plant.adoptedDate || '9999-12-31';
-                        const db = b.plant.adoptedDate || '9999-12-31';
-                        return da.localeCompare(db);
-                    }
-                    if (currentSort === 'adopt_desc') {
-                        const da = a.plant.adoptedDate || '0000-01-01';
-                        const db = b.plant.adoptedDate || '0000-01-01';
-                        return db.localeCompare(da);
-                    }
-                    if (currentSort === 'name_asc') {
-                        return a.plant.name.localeCompare(b.plant.name, 'ko');
-                    }
-                    if (currentSort === 'loc_asc') {
-                        const la = a.plant.location || '힣';
-                        const lb = b.plant.location || '힣';
-                        return la.localeCompare(lb, 'ko');
-                    }
+                    if (currentSort === 'water_asc') return a.stats.daysUntilWater - b.stats.daysUntilWater;
+                    if (currentSort === 'adopt_asc') return (a.plant.adoptedDate || '9999-12-31').localeCompare(b.plant.adoptedDate || '9999-12-31');
+                    if (currentSort === 'adopt_desc') return (b.plant.adoptedDate || '0000-01-01').localeCompare(a.plant.adoptedDate || '0000-01-01');
+                    if (currentSort === 'name_asc') return a.plant.name.localeCompare(b.plant.name, 'ko');
+                    if (currentSort === 'loc_asc') return (a.plant.location || '힣').localeCompare(b.plant.location || '힣', 'ko');
                     return 0;
                 });
 
@@ -2763,11 +2767,14 @@
 
                 filtered.forEach(({ plant, stats }) => {
                     const card = document.createElement('article');
-                    card.className = `plant-card ${stats.waterStatus}`;
+                    card.className = `plant-card ${plant.isArchived ? 'archived' : stats.waterStatus}`;
 
                     let ddayText = '';
                     let ddayClass = 'dday-ok';
-                    if (stats.daysUntilWater < 0) {
+                    if (plant.isArchived) {
+                        ddayText = '📦 보관됨 (알람 꺼짐)';
+                        ddayClass = 'dday-archive';
+                    } else if (stats.daysUntilWater < 0) {
                         ddayText = `🚨 ${Math.abs(stats.daysUntilWater)}일 지남`;
                         ddayClass = 'dday-urgent';
                     } else if (stats.daysUntilWater === 0) {
@@ -2784,33 +2791,14 @@
                         ddayClass = 'dday-ok';
                     }
 
-                    const thumbHtml = plant.photo
-                        ? `<img src="${plant.photo}" alt="${escapeHtml(plant.name)}">`
-                        : '🪴';
-
-                    const locBadge = plant.location
-                        ? `<span class="meta-pill loc">📍 ${escapeHtml(plant.location)}</span>`
-                        : `<span class="meta-pill">📍 미지정</span>`;
-
-                    const adoptBadge = plant.adoptedDate
-                        ? `<span class="meta-pill adopt">🏡 ${formatDotDate(plant.adoptedDate)} (D+${stats.adoptedDays})</span>`
-                        : '';
-
-                    const repotBadge = stats.daysSinceRepot !== null
-                        ? `<span class="meta-pill repot">🪴 ${stats.daysSinceRepot === 0 ? '오늘 분갈이' : `분갈이 후 ${stats.daysSinceRepot}일`}</span>`
-                        : '';
-
-                    const topdressBadge = stats.daysSinceTopdress !== null
-                        ? `<span class="meta-pill topdress">⛰️ ${stats.daysSinceTopdress === 0 ? '오늘 복토' : `복토 후 ${stats.daysSinceTopdress}일`}</span>`
-                        : '';
-
-                    const fertBadge = stats.daysSinceFertilizer !== null
-                        ? `<span class="meta-pill fert">🧪 ${stats.daysSinceFertilizer === 0 ? '오늘 비료' : `비료 후 ${stats.daysSinceFertilizer}일`}</span>`
-                        : '';
-
-                    const soilBadge = plant.soilMix
-                        ? `<span class="meta-pill soil">🧱 ${escapeHtml(plant.soilMix)}</span>`
-                        : '';
+                    const thumbHtml = plant.photo ? `<img src="${plant.photo}" alt="${escapeHtml(plant.name)}">` : '🪴';
+                    const locBadge = plant.location ? `<span class="meta-pill loc">📍 ${escapeHtml(plant.location)}</span>` : `<span class="meta-pill">📍 미지정</span>`;
+                    const adoptBadge = plant.adoptedDate ? `<span class="meta-pill adopt">🏡 ${formatDotDate(plant.adoptedDate)} (D+${stats.adoptedDays})</span>` : '';
+                    const archiveTag = plant.isArchived ? `<span class="meta-pill archive-tag">📦 보관함</span>` : '';
+                    const repotBadge = stats.daysSinceRepot !== null ? `<span class="meta-pill repot">🪴 ${stats.daysSinceRepot === 0 ? '오늘 분갈이' : `분갈이 후 ${stats.daysSinceRepot}일`}</span>` : '';
+                    const topdressBadge = stats.daysSinceTopdress !== null ? `<span class="meta-pill topdress">⛰️ ${stats.daysSinceTopdress === 0 ? '오늘 복토' : `복토 후 ${stats.daysSinceTopdress}일`}</span>` : '';
+                    const fertBadge = stats.daysSinceFertilizer !== null ? `<span class="meta-pill fert">🧪 ${stats.daysSinceFertilizer === 0 ? '오늘 비료' : `비료 후 ${stats.daysSinceFertilizer}일`}</span>` : '';
+                    const soilBadge = plant.soilMix ? `<span class="meta-pill soil">🧱 ${escapeHtml(plant.soilMix)}</span>` : '';
 
                     const newLeafStr = stats.avgNewLeafDays !== null ? `평균 ${stats.avgNewLeafDays}일` : '기록 대기';
                     const dropLeafStr = stats.avgDropLeafDays !== null ? `평균 ${stats.avgDropLeafDays}일` : '기록 대기';
@@ -2825,6 +2813,7 @@
                                 </div>
                                 ${plant.species ? `<div class="plant-species">🏷️ 품종: ${escapeHtml(plant.species)}</div>` : ''}
                                 <div class="meta-badges">
+                                    ${archiveTag}
                                     ${locBadge}
                                     ${adoptBadge}
                                     ${repotBadge}
@@ -2839,10 +2828,10 @@
                         <div class="cycle-summary-strip">
                             <span>🌱 신엽 개엽: <strong>${newLeafStr}</strong></span>
                             <span>🍂 하엽 진행: <strong>${dropLeafStr}</strong></span>
-                            <span>📅 다음 물: <strong>${formatDotDate(stats.nextWaterDate)}</strong></span>
+                            <span>📅 다음 물: <strong>${plant.isArchived ? '중지됨' : formatDotDate(stats.nextWaterDate)}</strong></span>
                         </div>
                         <div class="card-actions">
-                            <button type="button" class="btn btn-blue-soft" data-quick-water="${plant.id}">💧 오늘 물주기</button>
+                            <button type="button" class="btn btn-blue-soft" data-quick-water="${plant.id}" ${plant.isArchived ? 'style="opacity:0.45;"' : ''}>💧 오늘 물주기</button>
                             <button type="button" class="btn btn-green-soft" data-open-log="${plant.id}">🌿 기록</button>
                             <button type="button" class="btn btn-outline" data-detail-id="${plant.id}">상세</button>
                         </div>
@@ -2851,9 +2840,6 @@
                 });
             }
 
-            // =========================================================
-            // 월간 물주기 & 관리 캘린더 렌더링
-            // =========================================================
             function renderCalendar() {
                 document.getElementById('cal-month-title').textContent = `${calYear}년 ${calMonth + 1}월`;
                 const grid = document.getElementById('cal-grid');
@@ -2865,13 +2851,16 @@
 
                 const eventMap = {};
                 function pushEvent(dateStr, type, plant, detailText = '') {
+                    if (!dateStr) return;
                     if (!eventMap[dateStr]) eventMap[dateStr] = [];
                     eventMap[dateStr].push({ type, plant, detailText });
                 }
 
                 plants.forEach(p => {
                     const stats = computePlantStats(p);
-                    pushEvent(stats.nextWaterDate, 'scheduled', p);
+                    if (!p.isArchived) {
+                        pushEvent(stats.nextWaterDate, 'scheduled', p);
+                    }
                     p.logs.forEach(l => {
                         if (l.type === 'water') pushEvent(l.date, 'watered', p);
                         else if (l.type === 'repot') pushEvent(l.date, 'repot', p);
@@ -2946,9 +2935,6 @@
                 detailEl.innerHTML = html;
             }
 
-            // =========================================================
-            // 모달 열기 / 처리 로직
-            // =========================================================
             function openPlantModal(plantId = null) {
                 const form = document.getElementById('form-plant');
                 form.reset();
@@ -2970,6 +2956,7 @@
                     document.getElementById('plant-last-watered').value = stats.lastWaterDate || getTodayStr();
                     document.getElementById('plant-soil-mix').value = p.soilMix || '';
                     document.getElementById('plant-special-note').value = p.specialNote || '';
+                    document.getElementById('plant-is-archived').checked = Boolean(p.isArchived);
                     selectedPlantLoc = p.location || '';
                     if (p.photo) {
                         draftPlantPhoto = p.photo;
@@ -2986,6 +2973,7 @@
                     document.getElementById('plant-last-watered').value = getTodayStr();
                     document.getElementById('plant-soil-mix').value = '';
                     document.getElementById('plant-special-note').value = '';
+                    document.getElementById('plant-is-archived').checked = false;
                     selectedPlantLoc = customLocations[0] || '';
                 }
 
@@ -3057,13 +3045,10 @@
                     eventMap[dateStr].push({ kind, logObj });
                 }
 
-                // 다음 물 예정일 표시
-                pushEvent(stats.nextWaterDate, 'scheduled', null);
-
-                // 이 개체의 모든 상태 기록 매핑
-                plant.logs.forEach(l => {
-                    pushEvent(l.date, l.type, l);
-                });
+                if (!plant.isArchived) {
+                    pushEvent(stats.nextWaterDate, 'scheduled', null);
+                }
+                plant.logs.forEach(l => { pushEvent(l.date, l.type, l); });
 
                 for (let i = 0; i < firstDay; i++) {
                     const emptyCell = document.createElement('div');
@@ -3193,39 +3178,22 @@
                     });
                 }
 
-                const repotStatText = stats.daysSinceRepot !== null
-                    ? (stats.daysSinceRepot === 0 ? `오늘 (${formatDotDate(stats.lastRepotDate)})` : `후 ${stats.daysSinceRepot}일째 (${formatDotDate(stats.lastRepotDate)})`)
-                    : '기록 없음';
-
-                const topdressStatText = stats.daysSinceTopdress !== null
-                    ? (stats.daysSinceTopdress === 0 ? `오늘 (${formatDotDate(stats.lastTopdressDate)})` : `후 ${stats.daysSinceTopdress}일째 (${formatDotDate(stats.lastTopdressDate)})`)
-                    : '기록 없음';
-
-                const fertStatText = stats.daysSinceFertilizer !== null
-                    ? (stats.daysSinceFertilizer === 0 ? `오늘 (${formatDotDate(stats.lastFertDate)})` : `후 ${stats.daysSinceFertilizer}일째 (${formatDotDate(stats.lastFertDate)})`)
-                    : '기록 없음';
-
+                const repotStatText = stats.daysSinceRepot !== null ? (stats.daysSinceRepot === 0 ? `오늘 (${formatDotDate(stats.lastRepotDate)})` : `후 ${stats.daysSinceRepot}일째 (${formatDotDate(stats.lastRepotDate)})`) : '기록 없음';
+                const topdressStatText = stats.daysSinceTopdress !== null ? (stats.daysSinceTopdress === 0 ? `오늘 (${formatDotDate(stats.lastTopdressDate)})` : `후 ${stats.daysSinceTopdress}일째 (${formatDotDate(stats.lastTopdressDate)})`) : '기록 없음';
+                const fertStatText = stats.daysSinceFertilizer !== null ? (stats.daysSinceFertilizer === 0 ? `오늘 (${formatDotDate(stats.lastFertDate)})` : `후 ${stats.daysSinceFertilizer}일째 (${formatDotDate(stats.lastFertDate)})`) : '기록 없음';
                 const leafCycleSummary = `신엽 ${stats.avgNewLeafDays !== null ? stats.avgNewLeafDays + '일' : '-'} / 하엽 ${stats.avgDropLeafDays !== null ? stats.avgDropLeafDays + '일' : '-'}`;
 
                 const profileMemoHtml = (p.soilMix || p.specialNote) ? `
                     <div class="profile-memo-box">
-                        ${p.soilMix ? `
-                        <div class="profile-memo-row">
-                            <span class="profile-memo-label">🪴 현재 흙배합</span>
-                            <span class="profile-memo-val">${escapeHtml(p.soilMix)}</span>
-                        </div>` : ''}
-                        ${p.specialNote ? `
-                        <div class="profile-memo-row">
-                            <span class="profile-memo-label">📌 특이사항 메모</span>
-                            <span class="profile-memo-val">${escapeHtml(p.specialNote)}</span>
-                        </div>` : ''}
+                        ${p.soilMix ? `<div class="profile-memo-row"><span class="profile-memo-label">🪴 현재 흙배합</span><span class="profile-memo-val">${escapeHtml(p.soilMix)}</span></div>` : ''}
+                        ${p.specialNote ? `<div class="profile-memo-row"><span class="profile-memo-label">📌 특이사항 메모</span><span class="profile-memo-val">${escapeHtml(p.specialNote)}</span></div>` : ''}
                     </div>
                 ` : '';
 
                 body.innerHTML = `
                     ${p.photo ? `<img src="${p.photo}" alt="${escapeHtml(p.name)}" data-lightbox="${p.photo}" style="width:100%; max-height:200px; object-fit:cover; border-radius:14px; cursor:pointer; border:1px solid var(--border);">` : ''}
-                    <div style="display:flex; flex-wrap:wrap; gap:6px;">
-                        <span class="meta-pill loc">📍 ${escapeHtml(p.location || '미지정')}</span>
+                    <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+                        ${p.isArchived ? `<span class="meta-pill archive-tag">📦 보관된 식물 (물주기 알림 꺼짐)</span>` : `<span class="meta-pill loc">📍 ${escapeHtml(p.location || '미지정')}</span>`}
                         ${p.adoptedDate ? `<span class="meta-pill adopt">🏡 입양일 ${formatDotDate(p.adoptedDate)} (D+${stats.adoptedDays})</span>` : ''}
                         ${p.species ? `<span class="meta-pill">🏷️ 품종: ${escapeHtml(p.species)}</span>` : ''}
                     </div>
@@ -3239,7 +3207,7 @@
                         <div class="detail-stat-box">
                             <div class="lbl">🍃 현재 총 잎 수</div>
                             <div class="val">${stats.currentLeaves}장</div>
-                            <div class="sub">다음 물: ${formatDotDate(stats.nextWaterDate)}</div>
+                            <div class="sub">${p.isArchived ? '물주기 알람 꺼짐' : '다음 물: ' + formatDotDate(stats.nextWaterDate)}</div>
                         </div>
                         <div class="detail-stat-box">
                             <div class="lbl">🪴 최근 분갈이 경과</div>
@@ -3258,9 +3226,10 @@
                             <div class="val">${leafCycleSummary}</div>
                         </div>
                     </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr 0.7fr; gap:7px;">
-                        <button type="button" class="btn btn-green-soft" id="btn-detail-add-log">🌿 + 상태 기록</button>
-                        <button type="button" class="btn btn-outline" id="btn-detail-edit">✏️ 정보 수정</button>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr 0.7fr; gap:6px;">
+                        <button type="button" class="btn btn-green-soft" id="btn-detail-add-log">🌿 기록</button>
+                        <button type="button" class="btn btn-outline" id="btn-detail-edit">✏️ 수정</button>
+                        <button type="button" class="btn btn-outline" id="btn-detail-archive-toggle" style="color:${p.isArchived ? 'var(--primary)' : 'var(--amber)'};">${p.isArchived ? '📥 복원' : '📦 보관'}</button>
                         <button type="button" class="btn btn-outline" id="btn-detail-delete" style="color:var(--red); border-color:#fecaca;">삭제</button>
                     </div>
                     <div class="detail-view-tabs" style="margin-top:4px;">
@@ -3321,12 +3290,19 @@
                 }
 
                 document.getElementById('btn-detail-add-log').addEventListener('click', () => {
-                    closeModal('modal-detail');
                     openLogModal(p.id);
                 });
                 document.getElementById('btn-detail-edit').addEventListener('click', () => {
-                    closeModal('modal-detail');
                     openPlantModal(p.id);
+                });
+                document.getElementById('btn-detail-archive-toggle').addEventListener('click', () => {
+                    p.isArchived = !p.isArchived;
+                    saveState(true);
+                    syncLocationUIs();
+                    renderPlantList();
+                    if (activeTab === 'calendar') renderCalendar();
+                    closeModal('modal-detail');
+                    showToast(p.isArchived ? `📦 '${p.name}'이 보관함으로 이동되었습니다. (알람 꺼짐)` : `📥 '${p.name}'이 활성 목록으로 복원되었습니다.`);
                 });
                 document.getElementById('btn-detail-delete').addEventListener('click', () => {
                     openConfirm(
@@ -3348,8 +3324,71 @@
             }
 
             // =========================================================
-            // 백업 / 복원 / 엑셀(CSV) 내보내기
+            // 스마트폰 기본 캘린더(.ics) 물주기 알람 내보내기
             // =========================================================
+            function exportICS() {
+                const activePlants = plants.filter(p => !p.isArchived);
+                if (activePlants.length === 0) {
+                    showToast('알람을 등록할 활성 식물이 없습니다.');
+                    return;
+                }
+
+                // 날짜별로 물 줄 식물들을 묶어서 하루에 깔끔하게 1개의 통합 알람으로도 생성 + 개별 상세 포함
+                const dateGroupMap = {};
+                activePlants.forEach(p => {
+                    const stats = computePlantStats(p);
+                    let currDate = parseDateLocal(stats.nextWaterDate);
+                    if (!currDate) currDate = new Date();
+
+                    // 향후 6주기까지 일정 생성
+                    for (let i = 0; i < 6; i++) {
+                        const y = currDate.getFullYear();
+                        const m = String(currDate.getMonth() + 1).padStart(2, '0');
+                        const d = String(currDate.getDate()).padStart(2, '0');
+                        const dateStr = `${y}${m}${d}`;
+
+                        if (!dateGroupMap[dateStr]) dateGroupMap[dateStr] = [];
+                        dateGroupMap[dateStr].push(p);
+
+                        currDate.setDate(currDate.getDate() + stats.avgWaterInterval);
+                    }
+                });
+
+                let ics = [
+                    'BEGIN:VCALENDAR',
+                    'VERSION:2.0',
+                    'PRODID:-//PlantButler//Watering Alarm//KO',
+                    'CALSCALE:GREGORIAN',
+                    'METHOD:PUBLISH'
+                ].join('\r\n') + '\r\n';
+
+                Object.keys(dateGroupMap).sort().forEach(dateStr => {
+                    const list = dateGroupMap[dateStr];
+                    const names = list.map(p => p.name).join(', ');
+                    const descLines = list.map(p => `- ${p.name}${p.location ? ' (' + p.location + ')' : ''}`).join('\\n');
+
+                    ics += [
+                        'BEGIN:VEVENT',
+                        `UID:plantwater_${dateStr}_${Math.random().toString(36).slice(2, 8)}@plantbutler`,
+                        `SUMMARY:💧 [물주기 ${list.length}종] ${names}`,
+                        `DESCRIPTION:오늘 물 줄 식물 목록:\\n${descLines}`,
+                        `DTSTART;VALUE=DATE:${dateStr}`,
+                        `DTEND;VALUE=DATE:${dateStr}`,
+                        'BEGIN:VALARM',
+                        'TRIGGER:PT9H',
+                        'ACTION:DISPLAY',
+                        'DESCRIPTION:오늘 식물 물 주는 날입니다!',
+                        'END:VALARM',
+                        'END:VEVENT'
+                    ].join('\r\n') + '\r\n';
+                });
+
+                ics += 'END:VCALENDAR\r\n';
+                const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8;' });
+                triggerFileDownload(blob, `plant_water_alarms_${getTodayStr()}.ics`);
+                showToast('📅 캘린더 알람 파일(.ics)이 생성되었습니다! 다운로드 후 터치하여 폰 캘린더에 추가하세요.');
+            }
+
             function triggerFileDownload(blob, filename) {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -3372,14 +3411,13 @@
 
                 const exportObj = {
                     app: 'PlantButler',
-                    version: 4,
+                    version: 5,
                     exportedAt: now.toISOString(),
                     customLocations: customLocations,
                     plants: plants
                 };
-                const jsonStr = JSON.stringify(exportObj, null, 2);
                 triggerFileDownload(
-                    new Blob([jsonStr], { type: 'application/json;charset=utf-8' }),
+                    new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json;charset=utf-8' }),
                     `plant_journal_${getTodayStr()}.json`
                 );
                 showToast(`📤 백업 파일(plant_journal_${getTodayStr()}.json)이 저장되었습니다!`);
@@ -3392,9 +3430,8 @@
                     try {
                         const parsed = JSON.parse(evt.target.result);
                         let list = [];
-                        if (Array.isArray(parsed)) {
-                            list = parsed;
-                        } else if (parsed && Array.isArray(parsed.plants)) {
+                        if (Array.isArray(parsed)) list = parsed;
+                        else if (parsed && Array.isArray(parsed.plants)) {
                             list = parsed.plants;
                             if (Array.isArray(parsed.customLocations)) {
                                 parsed.customLocations.forEach(loc => {
@@ -3425,7 +3462,7 @@
             }
 
             function exportCSV() {
-                const headers = ['식물이름', '품종명', '현재장소', '흙배합', '특이사항메모', '입양일', '함께한일수', '현재잎수', '스마트물주기(일)', '산출방식', '마지막물준날', '다음물예정일', '최근분갈이일', '분갈이후경과(일)', '최근복토일', '복토후경과(일)', '최근비료일', '비료후경과(일)', '신엽개엽평균(일)', '하엽진행평균(일)'];
+                const headers = ['식물이름', '품종명', '현재장소', '보관여부', '흙배합', '특이사항메모', '입양일', '함께한일수', '현재잎수', '스마트물주기(일)', '산출방식', '마지막물준날', '다음물예정일', '최근분갈이일', '분갈이후경과(일)', '최근복토일', '복토후경과(일)', '최근비료일', '비료후경과(일)', '신엽개엽평균(일)', '하엽진행평균(일)'];
                 const rows = [headers.join(',')];
 
                 plants.forEach(p => {
@@ -3434,6 +3471,7 @@
                         `"${p.name.replace(/"/g, '""')}"`,
                         `"${p.species.replace(/"/g, '""')}"`,
                         `"${(p.location || '미지정').replace(/"/g, '""')}"`,
+                        p.isArchived ? '보관됨' : '활성',
                         `"${(p.soilMix || '').replace(/"/g, '""')}"`,
                         `"${(p.specialNote || '').replace(/"/g, '""')}"`,
                         p.adoptedDate || '',
@@ -3442,7 +3480,7 @@
                         s.avgWaterInterval,
                         `"${s.waterCalcMethod}"`,
                         s.lastWaterDate,
-                        s.nextWaterDate,
+                        p.isArchived ? '' : s.nextWaterDate,
                         s.lastRepotDate || '',
                         s.daysSinceRepot !== null ? s.daysSinceRepot : '',
                         s.lastTopdressDate || '',
@@ -3463,9 +3501,6 @@
                 showToast('📊 엑셀(CSV) 파일이 저장되었습니다!');
             }
 
-            // =========================================================
-            // 이벤트 바인딩
-            // =========================================================
             function setupPhotoHandlers(fileInputId, pasteZoneId, previewWrapId, previewImgId, btnLabelId, removeBtnId, isPlantPhoto) {
                 const fileInput = document.getElementById(fileInputId);
                 const pasteZone = document.getElementById(pasteZoneId);
@@ -3525,6 +3560,7 @@
                 document.getElementById('btn-theme-toggle').addEventListener('click', toggleTheme);
                 document.getElementById('btn-open-add').addEventListener('click', () => openPlantModal(null));
                 document.getElementById('btn-quick-export-json').addEventListener('click', exportBackupJSON);
+                document.getElementById('btn-export-ics').addEventListener('click', exportICS);
                 document.getElementById('input-quick-import-json').addEventListener('change', e => {
                     if (e.target.files && e.target.files[0]) importBackupJSON(e.target.files[0]);
                     e.target.value = '';
@@ -3550,7 +3586,6 @@
                     );
                 });
 
-                // 뷰 전환 탭
                 document.querySelectorAll('.view-tab-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         activeTab = btn.dataset.tab;
@@ -3561,7 +3596,6 @@
                     });
                 });
 
-                // 검색, 장소 필터, 정렬, 상태 필터
                 document.getElementById('search-input').addEventListener('input', renderPlantList);
                 document.getElementById('location-filter-select').addEventListener('change', e => {
                     activeLocationFilter = e.target.value;
@@ -3580,7 +3614,25 @@
                     });
                 });
 
-                // 장소 관리 모달
+                // 대시보드 상단 카드 클릭 시 해당 필터로 바로 전환
+                document.querySelectorAll('[data-stat-click]').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const type = card.dataset.statClick;
+                        const targetFilter = type === 'due4' ? 'due4' : (type === 'archive' ? 'archived' : (type === 'urgent' ? 'urgent' : 'all'));
+                        activeStatusFilter = targetFilter;
+                        document.querySelectorAll('#status-filter-chips .filter-chip').forEach(c => {
+                            c.classList.toggle('active', c.dataset.filter === targetFilter);
+                        });
+                        if (activeTab !== 'list') {
+                            activeTab = 'list';
+                            document.querySelectorAll('.view-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'list'));
+                            document.getElementById('view-list').classList.remove('hidden');
+                            document.getElementById('view-calendar').classList.add('hidden');
+                        }
+                        renderPlantList();
+                    });
+                });
+
                 document.getElementById('btn-open-loc-manage').addEventListener('click', () => {
                     renderManageLocations();
                     openModal('modal-locations');
@@ -3606,9 +3658,7 @@
                             : `'${locName}' 장소를 삭제할까요?`,
                         () => {
                             customLocations = customLocations.filter(l => l !== locName);
-                            plants.forEach(p => {
-                                if (p.location === locName) p.location = '';
-                            });
+                            plants.forEach(p => { if (p.location === locName) p.location = ''; });
                             saveState(true);
                             syncLocationUIs();
                             renderManageLocations();
@@ -3618,7 +3668,6 @@
                     );
                 });
 
-                // 식물 등록/수정 폼 내 장소 추가
                 document.getElementById('btn-add-loc-in-plant').addEventListener('click', () => {
                     const input = document.getElementById('plant-custom-loc-input');
                     const added = addLocationName(input.value);
@@ -3629,7 +3678,6 @@
                     }
                 });
 
-                // 식물 등록/수정 제출
                 document.getElementById('form-plant').addEventListener('submit', e => {
                     e.preventDefault();
                     const editId = document.getElementById('plant-edit-id').value;
@@ -3641,6 +3689,7 @@
                     const lastWatered = document.getElementById('plant-last-watered').value || getTodayStr();
                     const soilMix = document.getElementById('plant-soil-mix').value.trim();
                     const specialNote = document.getElementById('plant-special-note').value.trim();
+                    const isArchived = document.getElementById('plant-is-archived').checked;
 
                     if (!name) return;
 
@@ -3658,6 +3707,7 @@
                             p.location = selectedPlantLoc;
                             p.soilMix = soilMix;
                             p.specialNote = specialNote;
+                            p.isArchived = isArchived;
                             p.photo = draftPlantPhoto;
                             showToast(`'${name}' 정보가 수정되었습니다.`);
                         }
@@ -3673,6 +3723,7 @@
                             location: selectedPlantLoc,
                             soilMix,
                             specialNote,
+                            isArchived,
                             photo: draftPlantPhoto,
                             logs: lastWatered ? [{ id: generateId(), type: 'water', date: lastWatered, note: '첫 물주기 기록' }] : []
                         });
@@ -3685,9 +3736,11 @@
                     renderPlantList();
                     if (activeTab === 'calendar') renderCalendar();
                     closeModal('modal-plant');
+                    if (editId && !document.getElementById('modal-detail').classList.contains('hidden') && detailPlantId === editId) {
+                        openDetailModal(editId, true);
+                    }
                 });
 
-                // 상태 기록 타입 선택
                 document.querySelectorAll('#log-type-grid .log-type-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         selectedLogType = btn.dataset.type;
@@ -3695,7 +3748,6 @@
                     });
                 });
 
-                // 상태 기록 모달 내 장소 추가
                 document.getElementById('btn-add-loc-in-log').addEventListener('click', () => {
                     const input = document.getElementById('log-move-new-loc-input');
                     const added = addLocationName(input.value);
@@ -3706,7 +3758,6 @@
                     }
                 });
 
-                // 상태 기록 제출
                 document.getElementById('form-log').addEventListener('submit', e => {
                     e.preventDefault();
                     const plantId = document.getElementById('log-plant-id').value;
@@ -3740,12 +3791,14 @@
                     renderPlantList();
                     if (activeTab === 'calendar') renderCalendar();
                     closeModal('modal-log');
+                    if (!document.getElementById('modal-detail').classList.contains('hidden') && detailPlantId === p.id) {
+                        openDetailModal(p.id, true);
+                    }
 
                     const meta = LOG_TYPE_META[selectedLogType] || LOG_TYPE_META.note;
                     showToast(`${meta.icon} '${p.name}'에 ${meta.label} 기록이 저장되었습니다!`);
                 });
 
-                // 위임 클릭 이벤트
                 document.addEventListener('click', e => {
                     const closeTarget = e.target.closest('[data-close]');
                     if (closeTarget) {
@@ -3754,7 +3807,7 @@
                     }
 
                     if (e.target.classList.contains('modal-backdrop')) {
-                        e.target.classList.add('hidden');
+                        closeModal(e.target.id);
                         return;
                     }
 
@@ -3769,6 +3822,10 @@
                         const pid = quickWaterBtn.dataset.quickWater;
                         const p = plants.find(item => item.id === pid);
                         if (p) {
+                            if (p.isArchived) {
+                                showToast('📦 보관함 식물은 알람이 꺼져 있습니다.');
+                                return;
+                            }
                             const today = getTodayStr();
                             p.logs.push({
                                 id: generateId(),
@@ -3833,11 +3890,11 @@
                 });
 
                 document.getElementById('btn-close-lightbox').addEventListener('click', () => {
-                    document.getElementById('lightbox').classList.add('hidden');
+                    closeLightbox();
                 });
                 document.getElementById('lightbox').addEventListener('click', e => {
                     if (e.target.id === 'lightbox') {
-                        document.getElementById('lightbox').classList.add('hidden');
+                        closeLightbox();
                     }
                 });
 
@@ -3852,29 +3909,10 @@
                     renderCalendar();
                 });
 
-                setupPhotoHandlers(
-                    'input-plant-photo',
-                    'paste-plant-photo',
-                    'plant-photo-preview-wrap',
-                    'plant-photo-preview',
-                    'plant-photo-btn-label',
-                    'btn-remove-plant-photo',
-                    true
-                );
-                setupPhotoHandlers(
-                    'input-log-photo',
-                    'paste-log-photo',
-                    'log-photo-preview-wrap',
-                    'log-photo-preview',
-                    'log-photo-btn-label',
-                    'btn-remove-log-photo',
-                    false
-                );
+                setupPhotoHandlers('input-plant-photo', 'paste-plant-photo', 'plant-photo-preview-wrap', 'plant-photo-preview', 'plant-photo-btn-label', 'btn-remove-plant-photo', true);
+                setupPhotoHandlers('input-log-photo', 'paste-log-photo', 'log-photo-preview-wrap', 'log-photo-preview', 'log-photo-btn-label', 'btn-remove-log-photo', false);
             }
 
-            // =========================================================
-            // 초기화 실행
-            // =========================================================
             function init() {
                 const now = new Date();
                 const weekNames = ['일', '월', '화', '수', '목', '금', '토'];
