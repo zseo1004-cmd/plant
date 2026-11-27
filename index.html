@@ -1658,6 +1658,140 @@
             border-color: #334155;
         }
 
+
+        .meta-pill.gen {
+            background: #fdf2f8;
+            color: #be185d;
+            border: 1px solid #fbcfe8;
+        }
+
+        .meta-pill.parent-link {
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .lineage-card {
+            background: #f8fafc;
+            border: 1.5px solid var(--border);
+            border-radius: 13px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .lineage-title {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .lineage-chain {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lineage-node {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 9px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 800;
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.12s ease;
+        }
+
+        .lineage-node:hover {
+            border-color: var(--primary);
+        }
+
+        .lineage-node.current {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            cursor: default;
+        }
+
+        .lineage-node .gen-tag {
+            font-size: 10.5px;
+            padding: 1px 5px;
+            border-radius: 5px;
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .lineage-node.current .gen-tag {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .lineage-arrow {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 800;
+        }
+
+        .children-list-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 5px;
+            padding-top: 6px;
+            border-top: 1px dashed var(--border);
+            font-size: 11.5px;
+            color: var(--text-sub);
+        }
+
+        body.dark-mode .meta-pill.gen {
+            background: #3b0d24;
+            color: #f472b6;
+            border-color: #831843;
+        }
+
+        body.dark-mode .meta-pill.parent-link {
+            background: #063729;
+            color: #6ee7b7;
+            border-color: #065f46;
+        }
+
+        body.dark-mode .lineage-card {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        body.dark-mode .lineage-node {
+            background: #1e293b;
+            border-color: #475569;
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .lineage-node.current {
+            background: #132a1c;
+            border-color: #4ade80;
+            color: #4ade80;
+        }
+
+        body.dark-mode .lineage-node .gen-tag {
+            background: #334155;
+            color: #cbd5e1;
+        }
+
+        body.dark-mode .lineage-node.current .gen-tag {
+            background: #22c55e;
+            color: #052e16;
+        }
+
         body.dark-mode .archive-check-box {
             background: #0f172a !important;
             border-color: #334155 !important;
@@ -1799,13 +1933,25 @@
                 <input type="hidden" id="plant-edit-id">
 
                 <div class="form-group">
-                    <label class="form-label" for="plant-name">식물 애칭 / 개체 이름 *</label>
-                    <input type="text" class="form-input" id="plant-name" placeholder="예: 몬스테라 알보 #1, 초록이" required>
+                    <label class="form-label" for="plant-parent-id">🧬 모체 ID (부모 개체 선택 · 미선택 시 0세대 원종)</label>
+                    <select class="form-select" id="plant-parent-id">
+                        <option value="">- (원종 · 0세대)</option>
+                    </select>
+                    <span class="field-hint" id="plant-gen-preview-hint">현재 세대: <strong>0세대 (원종)</strong> · 삽목/자구 번식 개체면 바로 윗세대 부모만 선택하세요.</span>
+                </div>
+
+                <div class="form-group">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+                        <label class="form-label" for="plant-name">식물 이름 (고정 ID) *</label>
+                        <button type="button" class="tool-chip-btn green" id="btn-auto-code-name" style="padding:3px 8px; font-size:11px;">✨ 다음 번호 자동생성</button>
+                    </div>
+                    <input type="text" class="form-input" id="plant-name" placeholder="예: 몬알01, 몬알02 (품종약어 + 일련번호)" required>
+                    <span class="field-hint">10세대가 넘어가도 이름은 짧게 유지되고, 상세 정보에서 전체 계보를 추적합니다.</span>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="plant-species">품종명 (선택 · 같은 품종 여러 개체 묶음 집계)</label>
-                    <input type="text" class="form-input" id="plant-species" placeholder="예: 몬스테라 알보 (비우면 식물 이름으로 품종 집계)">
+                    <input type="text" class="form-input" id="plant-species" placeholder="예: 몬스테라 알보 (부모 선택 시 자동 채움)">
                 </div>
 
                 <div class="aligned-two-col">
@@ -2314,6 +2460,8 @@
                     species: String(raw.species || raw.cultivar || '').trim(),
                     baseLeaves: Math.max(0, Number(raw.baseLeaves ?? raw.leafCount ?? 0)),
                     defaultInterval: Math.max(1, Number(raw.defaultInterval ?? raw.waterInterval ?? 7)),
+                    parentId: String(raw.parentId || '').trim(),
+                    parentNameBackup: String(raw.parentNameBackup || '').trim(),
                     adoptedDate: raw.adoptedDate || '',
                     initialLastWatered: raw.initialLastWatered || raw.lastWatered || today,
                     location: String(raw.location || '').trim(),
@@ -2406,6 +2554,18 @@
                             if (legacyStr) { rawStr = legacyStr; break; }
                         }
                     }
+                    if (!rawStr) {
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const k = localStorage.key(i);
+                            if (k && (k.includes('plant') || k.includes('Plant')) && k !== THEME_STORAGE_KEY) {
+                                const candidate = localStorage.getItem(k);
+                                if (candidate && candidate.includes('"plants"')) {
+                                    rawStr = candidate;
+                                    break;
+                                }
+                            }
+                        }
+                    }
 
                     if (!rawStr) {
                         plants = createSamplePlants();
@@ -2457,6 +2617,146 @@
                         ? `✅ 최신 백업 완료 (${lastBackupAt}) · 기기 자동 저장 중`
                         : `📱 기기 자동 저장 중 · 언제든 <strong>백업</strong>으로 파일 보관 가능`;
                 }
+            }
+
+
+            // =========================================================
+            // 세대(Generation) 및 원종 -> 현재 개체 계보(Lineage) 계산
+            // =========================================================
+            function getPlantLineage(plant) {
+                if (!plant) return { generation: 0, parent: null, parentLabel: '- (원종)', ancestors: [], chain: [] };
+                const visited = new Set([plant.id]);
+                const ancestors = [];
+                let curr = plant;
+
+                while (curr && curr.parentId) {
+                    if (visited.has(curr.parentId)) break; // 순환 참조 방지
+                    const parentObj = plants.find(item => item.id === curr.parentId);
+                    if (!parentObj) break;
+                    visited.add(parentObj.id);
+                    ancestors.unshift(parentObj);
+                    curr = parentObj;
+                }
+
+                const directParent = ancestors.length > 0 ? ancestors[ancestors.length - 1] : null;
+                let parentLabel = '- (원종)';
+                if (directParent) {
+                    parentLabel = directParent.name;
+                } else if (plant.parentNameBackup) {
+                    parentLabel = `${plant.parentNameBackup} (삭제됨)`;
+                }
+
+                const chain = [
+                    ...ancestors.map((a, idx) => ({ id: a.id, name: a.name, gen: idx, isCurrent: false })),
+                    { id: plant.id, name: plant.name, gen: ancestors.length, isCurrent: true }
+                ];
+
+                return {
+                    generation: ancestors.length,
+                    parent: directParent,
+                    parentLabel,
+                    ancestors,
+                    chain
+                };
+            }
+
+            function getPlantChildren(plantId) {
+                return plants.filter(p => p.parentId === plantId);
+            }
+
+            function getDescendantIds(plantId) {
+                const desc = new Set();
+                const queue = [plantId];
+                while (queue.length > 0) {
+                    const cid = queue.shift();
+                    plants.forEach(p => {
+                        if (p.parentId === cid && !desc.has(p.id)) {
+                            desc.add(p.id);
+                            queue.push(p.id);
+                        }
+                    });
+                }
+                return desc;
+            }
+
+            function populateParentSelect(excludePlantId = '', selectedParentId = '') {
+                const sel = document.getElementById('plant-parent-id');
+                if (!sel) return;
+                const invalidIds = excludePlantId ? getDescendantIds(excludePlantId) : new Set();
+                if (excludePlantId) invalidIds.add(excludePlantId);
+
+                sel.innerHTML = `<option value="">- (원종 · 0세대)</option>`;
+                const sortedCandidates = [...plants].sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+                sortedCandidates.forEach(cand => {
+                    if (invalidIds.has(cand.id)) return;
+                    const lin = getPlantLineage(cand);
+                    const opt = document.createElement('option');
+                    opt.value = cand.id;
+                    opt.textContent = `${cand.name} (${lin.generation}세대${cand.species ? ' · ' + cand.species : ''})`;
+                    sel.appendChild(opt);
+                });
+
+                sel.value = Array.from(sel.options).some(o => o.value === selectedParentId) ? selectedParentId : '';
+                updateGenerationPreviewHint();
+            }
+
+            function updateGenerationPreviewHint() {
+                const sel = document.getElementById('plant-parent-id');
+                const hint = document.getElementById('plant-gen-preview-hint');
+                if (!sel || !hint) return;
+                const pid = sel.value;
+                if (!pid) {
+                    hint.innerHTML = `현재 세대: <strong>0세대 (원종)</strong> · 삽목/자구 번식 개체면 바로 윗세대 부모만 선택하세요.`;
+                    return;
+                }
+                const parentObj = plants.find(p => p.id === pid);
+                if (!parentObj) return;
+                const parentLin = getPlantLineage(parentObj);
+                const nextGen = parentLin.generation + 1;
+                hint.innerHTML = `부모: <strong>${escapeHtml(parentObj.name)}</strong> (${parentLin.generation}세대) → 현재 개체: <strong style="color:var(--primary-dark);">${nextGen}세대</strong>`;
+            }
+
+            function suggestNextCodeName() {
+                const nameInput = document.getElementById('plant-name');
+                const speciesInput = document.getElementById('plant-species');
+                const parentSel = document.getElementById('plant-parent-id');
+                const parentObj = parentSel && parentSel.value ? plants.find(p => p.id === parentSel.value) : null;
+
+                let baseText = nameInput.value.trim() || (parentObj ? parentObj.name : '') || speciesInput.value.trim();
+                // Extract prefix before trailing digits (e.g., "몬알01" -> "몬알", "몬스테라 알보" -> "몬알")
+                let prefix = '';
+                const match = baseText.match(/^([^\d#\-_]+?)(\d+)$/);
+                if (match) {
+                    prefix = match[1].trim();
+                } else if (baseText) {
+                    const words = baseText.replace(/#\d+/g, '').trim().split(/\s+/);
+                    if (words.length >= 2) {
+                        prefix = words.map(w => w.charAt(0)).join('');
+                    } else {
+                        prefix = words[0].slice(0, 2);
+                    }
+                } else {
+                    prefix = '식물';
+                }
+
+                // Find highest existing number for this prefix
+                let maxNum = 0;
+                const escapedPrefix = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const rePrefix = new RegExp('^' + escapedPrefix + '(\\d+)$');
+                plants.forEach(p => {
+                    const m = p.name.trim().match(rePrefix);
+                    if (m) {
+                        const n = parseInt(m[1], 10);
+                        if (!isNaN(n) && n > maxNum) maxNum = n;
+                    }
+                });
+
+                const nextNumStr = String(maxNum + 1).padStart(2, '0');
+                nameInput.value = `${prefix}${nextNumStr}`;
+                if (!speciesInput.value.trim() && parentObj && parentObj.species) {
+                    speciesInput.value = parentObj.species;
+                }
+                showToast(`✨ '${prefix}${nextNumStr}' 이름이 자동 입력되었습니다.`);
             }
 
             function calculateSmartWaterCycle(uniqueWaterDates, defaultInterval) {
@@ -2729,9 +3029,12 @@
                     }
 
                     if (searchVal) {
+                        const linSearch = getPlantLineage(plant);
                         const hay = [
                             plant.name,
                             plant.species,
+                            `${linSearch.generation}세대`,
+                            linSearch.parentLabel,
                             plant.location,
                             plant.soilMix,
                             plant.specialNote,
@@ -2791,7 +3094,12 @@
                         ddayClass = 'dday-ok';
                     }
 
+                    const lineage = getPlantLineage(plant);
                     const thumbHtml = plant.photo ? `<img src="${plant.photo}" alt="${escapeHtml(plant.name)}">` : '🪴';
+                    const genBadge = `<span class="meta-pill gen">🧬 ${lineage.generation}세대</span>`;
+                    const parentBadge = lineage.generation === 0
+                        ? `<span class="meta-pill parent-link">🌱 모체: 원종</span>`
+                        : `<span class="meta-pill parent-link">🌿 부모: ${escapeHtml(lineage.parentLabel)}</span>`;
                     const locBadge = plant.location ? `<span class="meta-pill loc">📍 ${escapeHtml(plant.location)}</span>` : `<span class="meta-pill">📍 미지정</span>`;
                     const adoptBadge = plant.adoptedDate ? `<span class="meta-pill adopt">🏡 ${formatDotDate(plant.adoptedDate)} (D+${stats.adoptedDays})</span>` : '';
                     const archiveTag = plant.isArchived ? `<span class="meta-pill archive-tag">📦 보관함</span>` : '';
@@ -2814,6 +3122,8 @@
                                 ${plant.species ? `<div class="plant-species">🏷️ 품종: ${escapeHtml(plant.species)}</div>` : ''}
                                 <div class="meta-badges">
                                     ${archiveTag}
+                                    ${genBadge}
+                                    ${parentBadge}
                                     ${locBadge}
                                     ${adoptBadge}
                                     ${repotBadge}
@@ -2936,6 +3246,7 @@
             }
 
             function openPlantModal(plantId = null) {
+                closeModal('modal-detail');
                 const form = document.getElementById('form-plant');
                 form.reset();
                 draftPlantPhoto = '';
@@ -2957,6 +3268,7 @@
                     document.getElementById('plant-soil-mix').value = p.soilMix || '';
                     document.getElementById('plant-special-note').value = p.specialNote || '';
                     document.getElementById('plant-is-archived').checked = Boolean(p.isArchived);
+                    populateParentSelect(p.id, p.parentId || '');
                     selectedPlantLoc = p.location || '';
                     if (p.photo) {
                         draftPlantPhoto = p.photo;
@@ -2974,6 +3286,7 @@
                     document.getElementById('plant-soil-mix').value = '';
                     document.getElementById('plant-special-note').value = '';
                     document.getElementById('plant-is-archived').checked = false;
+                    populateParentSelect('', '');
                     selectedPlantLoc = customLocations[0] || '';
                 }
 
@@ -2982,6 +3295,7 @@
             }
 
             function openLogModal(plantId, initialType = 'water') {
+                closeModal('modal-detail');
                 const p = plants.find(item => item.id === plantId);
                 if (!p) return;
 
@@ -3190,13 +3504,45 @@
                     </div>
                 ` : '';
 
+                const lineage = getPlantLineage(p);
+                const children = getPlantChildren(p.id);
+                const chainNodesHtml = lineage.chain.map((node, idx) => {
+                    const arrow = idx > 0 ? `<span class="lineage-arrow">→</span>` : '';
+                    const originTag = node.gen === 0 ? '0세대·원종' : `${node.gen}세대`;
+                    if (node.isCurrent) {
+                        return `${arrow}<span class="lineage-node current"><span>${escapeHtml(node.name)}</span><span class="gen-tag">${originTag}</span></span>`;
+                    }
+                    return `${arrow}<button type="button" class="lineage-node" data-detail-id="${node.id}" title="눌러서 부모 개체 상세 보기"><span>${escapeHtml(node.name)}</span><span class="gen-tag">${originTag}</span></button>`;
+                }).join('');
+
+                const childrenHtml = children.length > 0 ? `
+                    <div class="children-list-wrap">
+                        <strong style="color:var(--text-main);">🌱 분양/삽목한 다음 세대 (${children.length}개체):</strong>
+                        ${children.map(ch => `<button type="button" class="lineage-node" style="padding:3px 8px; font-size:11.5px;" data-detail-id="${ch.id}">${escapeHtml(ch.name)} <span class="gen-tag">${lineage.generation + 1}세대</span></button>`).join('')}
+                    </div>
+                ` : '';
+
+                const lineageSectionHtml = `
+                    <div class="lineage-card">
+                        <div class="lineage-title">
+                            <span>🧬 개체 계보 (원종 → 현재 ${lineage.generation}세대)</span>
+                            <span style="font-size:11px; color:var(--text-sub); font-weight:700;">부모: ${escapeHtml(lineage.parentLabel)}</span>
+                        </div>
+                        <div class="lineage-chain">${chainNodesHtml}</div>
+                        ${childrenHtml}
+                    </div>
+                `;
+
                 body.innerHTML = `
                     ${p.photo ? `<img src="${p.photo}" alt="${escapeHtml(p.name)}" data-lightbox="${p.photo}" style="width:100%; max-height:200px; object-fit:cover; border-radius:14px; cursor:pointer; border:1px solid var(--border);">` : ''}
                     <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
                         ${p.isArchived ? `<span class="meta-pill archive-tag">📦 보관된 식물 (물주기 알림 꺼짐)</span>` : `<span class="meta-pill loc">📍 ${escapeHtml(p.location || '미지정')}</span>`}
+                        <span class="meta-pill gen">🧬 ${lineage.generation}세대</span>
+                        <span class="meta-pill parent-link">${lineage.generation === 0 ? '🌱 원종 개체' : '🌿 모체: ' + escapeHtml(lineage.parentLabel)}</span>
                         ${p.adoptedDate ? `<span class="meta-pill adopt">🏡 입양일 ${formatDotDate(p.adoptedDate)} (D+${stats.adoptedDays})</span>` : ''}
                         ${p.species ? `<span class="meta-pill">🏷️ 품종: ${escapeHtml(p.species)}</span>` : ''}
                     </div>
+                    ${lineageSectionHtml}
                     ${profileMemoHtml}
                     <div class="detail-stats-grid">
                         <div class="detail-stat-box">
@@ -3462,13 +3808,18 @@
             }
 
             function exportCSV() {
-                const headers = ['식물이름', '품종명', '현재장소', '보관여부', '흙배합', '특이사항메모', '입양일', '함께한일수', '현재잎수', '스마트물주기(일)', '산출방식', '마지막물준날', '다음물예정일', '최근분갈이일', '분갈이후경과(일)', '최근복토일', '복토후경과(일)', '최근비료일', '비료후경과(일)', '신엽개엽평균(일)', '하엽진행평균(일)'];
+                const headers = ['식물이름', '모체ID(부모)', '세대', '전체계보', '품종명', '현재장소', '보관여부', '흙배합', '특이사항메모', '입양일', '함께한일수', '현재잎수', '스마트물주기(일)', '산출방식', '마지막물준날', '다음물예정일', '최근분갈이일', '분갈이후경과(일)', '최근복토일', '복토후경과(일)', '최근비료일', '비료후경과(일)', '신엽개엽평균(일)', '하엽진행평균(일)'];
                 const rows = [headers.join(',')];
 
                 plants.forEach(p => {
                     const s = computePlantStats(p);
+                    const lin = getPlantLineage(p);
+                    const chainStr = lin.chain.map(n => `${n.name}(${n.gen}세대)`).join(' > ');
                     const cols = [
                         `"${p.name.replace(/"/g, '""')}"`,
+                        `"${lin.parentLabel.replace(/"/g, '""')}"`,
+                        `"${lin.generation}세대"`,
+                        `"${chainStr.replace(/"/g, '""')}"`,
                         `"${p.species.replace(/"/g, '""')}"`,
                         `"${(p.location || '미지정').replace(/"/g, '""')}"`,
                         p.isArchived ? '보관됨' : '활성',
@@ -3668,6 +4019,20 @@
                     );
                 });
 
+                document.getElementById('plant-parent-id').addEventListener('change', () => {
+                    updateGenerationPreviewHint();
+                    const pid = document.getElementById('plant-parent-id').value;
+                    const speciesInput = document.getElementById('plant-species');
+                    if (pid && !speciesInput.value.trim()) {
+                        const parentObj = plants.find(p => p.id === pid);
+                        if (parentObj && parentObj.species) {
+                            speciesInput.value = parentObj.species;
+                        }
+                    }
+                });
+
+                document.getElementById('btn-auto-code-name').addEventListener('click', suggestNextCodeName);
+
                 document.getElementById('btn-add-loc-in-plant').addEventListener('click', () => {
                     const input = document.getElementById('plant-custom-loc-input');
                     const added = addLocationName(input.value);
@@ -3681,6 +4046,9 @@
                 document.getElementById('form-plant').addEventListener('submit', e => {
                     e.preventDefault();
                     const editId = document.getElementById('plant-edit-id').value;
+                    const parentId = document.getElementById('plant-parent-id').value;
+                    const parentObj = parentId ? plants.find(item => item.id === parentId) : null;
+                    const parentNameBackup = parentObj ? parentObj.name : '';
                     const name = document.getElementById('plant-name').value.trim();
                     const species = document.getElementById('plant-species').value.trim();
                     const targetLeaves = Math.max(0, Number(document.getElementById('plant-leaves').value || 0));
@@ -3699,6 +4067,8 @@
                             const oldStats = computePlantStats(p);
                             const leafDelta = targetLeaves - oldStats.currentLeaves;
                             p.baseLeaves = Math.max(0, p.baseLeaves + leafDelta);
+                            p.parentId = parentId;
+                            p.parentNameBackup = parentNameBackup;
                             p.name = name;
                             p.species = species;
                             p.defaultInterval = interval;
@@ -3714,6 +4084,8 @@
                     } else {
                         const newPlant = normalizePlant({
                             id: generateId(),
+                            parentId,
+                            parentNameBackup,
                             name,
                             species,
                             baseLeaves: targetLeaves,
